@@ -29,17 +29,22 @@ class _MyAppState extends State<MyApp> {
     _loadThemePreference();
   }
 
+  //this function get current theme from shared preferance
+  //assign this value to -isDarkMode
   Future<void> _loadThemePreference() async {
     bool isDarkMode = await ThemeManager.getThemePreference();
     setState(() {
       _isDarkMode = isDarkMode;
     });
   }
-
+  
+  //toggels current theme
   Future<void> _toggleTheme() async {
     setState(() {
       _isDarkMode = !_isDarkMode;
     });
+    
+    //set toggeled theme in shared preferances
     await ThemeManager.setThemePreference(_isDarkMode); // Save preference
   }
 
@@ -48,6 +53,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       title: 'News App',
       theme: _isDarkMode ? ThemeData.dark() : ThemeData.light(),
+
       home: BlocProvider<ArticleBloc>(
         create: (context) => serviceLocator<ArticleBloc>()
           ..add(

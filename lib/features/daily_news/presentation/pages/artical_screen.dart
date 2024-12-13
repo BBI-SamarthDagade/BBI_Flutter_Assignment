@@ -54,11 +54,17 @@ class ArticleScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 itemCount: state.articles.length + 1, // Extra for loading indicator
                 itemBuilder: (context, index) {
-                  if (index == state.articles.length) {
+                  if (index == state.articles.length && index!=50) {
                     return const Center(child: CircularProgressIndicator());
                   }
-                  final article = state.articles[index];
-                  return ArticleCard(article: article, placeholderImage: placeholderImage); // Use ArticleCard
+                  if(index!=50){
+                    final article = state.articles[index];
+                    return ArticleCard(article: article, placeholderImage: placeholderImage); 
+                  }
+                  else{
+                    return Container();
+                  }
+                  // Use ArticleCard
                 },
               ),
             );

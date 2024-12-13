@@ -12,7 +12,10 @@ class ArticleBloc extends Bloc<ArticleEvent, ArticleState> {
   int _page = 1;
 
   ArticleBloc(this.fetchArticalUseCase) : super(ArticleInitial()) {
+    
     on<FetchArticlesEvent>((event, emit) async {
+
+    if(event.page < 6){
       try {
         final Either<Failure, List<Article>> result =
             await fetchArticalUseCase(event.page, event.pageSize);
@@ -34,6 +37,9 @@ class ArticleBloc extends Bloc<ArticleEvent, ArticleState> {
       } catch (e) {
         emit(ArticleError('An unexpected error occured'));
       }
+    }
+
+
     });
   }
 }
