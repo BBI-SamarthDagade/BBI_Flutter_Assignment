@@ -16,7 +16,7 @@ class ArticleCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 8.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12.0),
-        color: Theme.of(context).cardColor,
+         color: Theme.of(context).cardColor,
         boxShadow: const [
           BoxShadow(
             color: Colors.black12,

@@ -33,9 +33,9 @@ class _MyAppState extends State<MyApp> {
   //assign this value to -isDarkMode
   Future<void> _loadThemePreference() async {
     bool isDarkMode = await ThemeManager.getThemePreference();
-    setState(() {
+    // setState(() {
       _isDarkMode = isDarkMode;
-    });
+    // });
   }
   
   //toggels current theme
@@ -43,7 +43,7 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       _isDarkMode = !_isDarkMode;
     });
-    
+    print(_isDarkMode);
     //set toggeled theme in shared preferances
     await ThemeManager.setThemePreference(_isDarkMode); // Save preference
   }

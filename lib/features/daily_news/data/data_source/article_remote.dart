@@ -17,7 +17,7 @@ class NewsApiServiceImpl extends NewsApiService {
     final String? api_key = dotenv.env['API_KEY'];
      
     final response = await http.get(Uri.parse(
-        'https://newsapi.org/v2/everything?q=technology&from=2024-13-12&language=en&sortBy=publishedAt&apiKey=$api_key&page=$page&pageSize=$pageSize'));
+        'https://newsapi.org/v2/everything?q=technology&from=2024-16-12&language=en&sortBy=publishedAt&apiKey=$api_key&page=$page&pageSize=$pageSize'));
       print(response.statusCode);
     if (response.statusCode == 200) {
      Map<String, dynamic> data = jsonDecode(response.body);
