@@ -20,28 +20,29 @@ class TaskLocalDataSourceImpl implements TaskLocalDataSource {
   /// Helper: Retrieve all tasks from SharedPreferences
   List<Task> _getTasksFromPrefs() {
     final String? tasksJson = sharedPreferences.getString(_taskKey);
+
     if (tasksJson != null) {
-      List<dynamic> jsonList = json.decode(tasksJson);
-      return jsonList.map((jsonItem) => Task.fromMap(jsonItem)).toList();
+      List<dynamic> jsonList = json.decode(
+          tasksJson); //[{index: 74, task: asdfsdfsdf}, {index: 75, task: asdfsadfsdf}]  List<Map<String, dynamic>>
+      return jsonList
+          .map((jsonItem) => Task.fromMap(jsonItem))
+          .toList(); //[Task(index : 74, task: asdfsdfsdf), Task(task: 75, index: asdfsadfsdf)]
     }
     return [];
   }
 
   /// Helper: Save all tasks to SharedPreferences
- /// Helper: Save all tasks to SharedPreferences
-Future<void> _saveTasksToPrefs(List<Task> tasks) async {
-  print("saving");
-  
-  // Convert tasks to JSON without filtering
-  final List<Map<String, dynamic>> jsonList =
-      tasks.map((task) => task.toMap()).toList();
-  final String tasksJson = json.encode(jsonList);
+  Future<void> _saveTasksToPrefs(List<Task> tasks) async {
+    // Convert tasks to JSON without filtering
+    final List<Map<String, dynamic>> jsonList =
+        tasks.map((task) => task.toMap()).toList();
+        
+    final String tasksJson = json.encode(jsonList);
 
-  // Save to shared preferences
-  await sharedPreferences.setString(_taskKey, tasksJson);
-  print("Task Saved Successfully");
-}
-
+    // Save to shared preferences
+    await sharedPreferences.setString(_taskKey, tasksJson);
+    print("Task Saved Successfully");
+  }
 
 
   /// Helper: Get current task ID counter
@@ -83,10 +84,9 @@ Future<void> _saveTasksToPrefs(List<Task> tasks) async {
   Future<void> deleteTask(int index) async {
     print("this is local $index");
     List<Task> tasks = _getTasksFromPrefs();
-      print("before remove $tasks $index");
-     
-      
-  if (index >= 0 && index < tasks.length) {
+    print("before remove $tasks $index");
+
+    if (index >= 0 && index < tasks.length) {
       // Remove the task at the specified index
       tasks.removeAt(index);
       // Save the updated list back to SharedPreferences
@@ -94,9 +94,6 @@ Future<void> _saveTasksToPrefs(List<Task> tasks) async {
       print("after remove $tasks $index");
 
       print("Task Removed Sucessfully");
-    
-    
-
     }
   }
 

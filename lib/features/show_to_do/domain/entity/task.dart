@@ -27,6 +27,7 @@ class Task extends Equatable{
   }
 
   // Convert a Map to a Task object
+  //factory constructor of Class Task create and instace of Task from Map
   factory Task.fromMap(Map<String, dynamic> map) {
     return Task(
       index: map['index'],
