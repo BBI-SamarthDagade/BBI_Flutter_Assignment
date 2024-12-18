@@ -33,12 +33,14 @@ class TaskLocalDataSourceImpl implements TaskLocalDataSource {
 
   /// Helper: Save all tasks to SharedPreferences
   Future<void> _saveTasksToPrefs(List<Task> tasks) async {
-    // Convert tasks to JSON without filtering
+
+    //convert list of tasks into List<Map<String, dynamic>>
     final List<Map<String, dynamic>> jsonList =
         tasks.map((task) => task.toMap()).toList();
         
-    final String tasksJson = json.encode(jsonList);
-
+    //convert into json
+    final String tasksJson = json.encode(jsonList);  //[{"index":76,"task":"asdfasdfsdfsadf"}]  
+   
     // Save to shared preferences
     await sharedPreferences.setString(_taskKey, tasksJson);
     print("Task Saved Successfully");
