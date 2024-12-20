@@ -10,14 +10,10 @@ class ArticleRepositoryImplementation implements ArticleRepository {
   ArticleRepositoryImplementation(this.newsApiService);
 
   @override
-  Future<Either<Failure, List<Article>>> getNewsArticles(int page, int pageSize) async {
-
+  Future<Either<Failure, List<Article>>> getNewsArticles(
+      int page, int pageSize) async {
     try {
-       
       final httpResponse = await newsApiService.getNewsArticles(page, pageSize);
-      
-      
-
       return Right(httpResponse);
     } catch (e) {
       return Left(Failure(message: 'Failed to fetch News'));

@@ -12,34 +12,29 @@ class ArticleBloc extends Bloc<ArticleEvent, ArticleState> {
   int _page = 1;
 
   ArticleBloc(this.fetchArticalUseCase) : super(ArticleInitial()) {
-    
     on<FetchArticlesEvent>((event, emit) async {
+      if (event.page < 6) {
+        try {
+          final Either<Failure, List<Article>> result =
+              await fetchArticalUseCase(event.page, event.pageSize);
 
-    if(event.page < 6){
-      try {
-        final Either<Failure, List<Article>> result =
-            await fetchArticalUseCase(event.page, event.pageSize);
+          result.fold((l) {
+            emit(ArticleError(l.message));
+          }, (r) {
+            if (state is ArticleLoaded) {
+              final currentState = state as ArticleLoaded;
 
-        result.fold((l) {
-          emit(ArticleError(l.message));
-        }, (r) {
-          if (state is ArticleLoaded) {
-            final currentState = state as ArticleLoaded;
-
-            if (currentState != event.page) {
-              emit(ArticleLoaded([...currentState.articles, ...r]));
+              if (currentState != event.page) {
+                emit(ArticleLoaded([...currentState.articles, ...r]));
+              }
+            } else {
+              emit(ArticleLoaded(r));
             }
-          } else {
-            emit(ArticleLoaded(r));
-          }
-
-        });
-      } catch (e) {
-        emit(ArticleError('An unexpected error occured'));
+          });
+        } catch (e) {
+          emit(ArticleError('An unexpected error occured'));
+        }
       }
-    }
-
-
     });
   }
 }

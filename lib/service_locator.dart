@@ -6,17 +6,15 @@ import 'package:news_app/features/daily_news/domain/repository/article_repositor
 import 'package:news_app/features/daily_news/domain/usecases/fetch_artical_use_case.dart';
 import 'package:news_app/features/daily_news/presentation/bloc/article_bloc.dart';
 
-   
 //GetIt.instance creates a singleton instance of the GetIt service locator, ensuring all components in the app access the same instance.
-final serviceLocator = GetIt.instance; 
-
+final serviceLocator = GetIt.instance;
 
 //setup all dependancies require for app
 void setupLocator() {
-
   //The object is not created immediately during app startup. Instead, it is instantiated only when it is accessed for the first time.
   // Register services
-  serviceLocator.registerLazySingleton<NewsApiService>(() => NewsApiServiceImpl());
+  serviceLocator
+      .registerLazySingleton<NewsApiService>(() => NewsApiServiceImpl());
 
   // Register repositories
   serviceLocator.registerLazySingleton<ArticleRepository>(
@@ -27,9 +25,10 @@ void setupLocator() {
       () => FetchArticalUseCase(serviceLocator<ArticleRepository>()));
 
 // Register blocs
-//   This registers a factory for the ArticleBloc class in the GetIt service locator. 
+//   This registers a factory for the ArticleBloc class in the GetIt service locator.
 //   It ensures that every time the ArticleBloc is requested from the service locator,
 //  a new instance is created, with its required dependency (FetchArticalUseCase) automatically injected.
 
-  serviceLocator.registerFactory(() => ArticleBloc(serviceLocator<FetchArticalUseCase>()));
+  serviceLocator.registerFactory(
+      () => ArticleBloc(serviceLocator<FetchArticalUseCase>()));
 }

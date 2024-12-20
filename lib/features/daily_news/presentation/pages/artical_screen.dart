@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:news_app/features/daily_news/presentation/bloc/article_bloc.dart';
-import 'package:news_app/features/daily_news/presentation/bloc/article_state.dart';
 import 'package:news_app/features/daily_news/presentation/bloc/article_event.dart';
+import 'package:news_app/features/daily_news/presentation/bloc/article_state.dart';
 import 'package:news_app/features/daily_news/presentation/widgets/article_card.dart'; // Import the ArticleCard widget
 
 class ArticleScreen extends StatelessWidget {
@@ -52,16 +52,17 @@ class ArticleScreen extends StatelessWidget {
               child: ListView.builder(
                 controller: _scrollController,
                 padding: const EdgeInsets.all(8.0),
-                itemCount: state.articles.length + 1, // Extra for loading indicator
+                itemCount:
+                    state.articles.length + 1, // Extra for loading indicator
                 itemBuilder: (context, index) {
-                  if (index == state.articles.length && index!=50) {
+                  if (index == state.articles.length && page < 5) {
                     return const Center(child: CircularProgressIndicator());
                   }
-                  if(index!=50){
+                  if (index != state.articles.length) {
                     final article = state.articles[index];
-                    return ArticleCard(article: article, placeholderImage: placeholderImage); 
-                  }
-                  else{
+                    return ArticleCard(
+                        article: article, placeholderImage: placeholderImage);
+                  } else {
                     return Container();
                   }
                   // Use ArticleCard
