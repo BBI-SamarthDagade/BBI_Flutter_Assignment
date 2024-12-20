@@ -11,4 +11,5 @@ class UpdateTaskUseCase {
   Future<Either<Failure, void>> call(Task task) {
     return taskRepository.updateTask(task);
   }
+  
 }

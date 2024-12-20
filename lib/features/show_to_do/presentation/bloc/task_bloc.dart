@@ -87,7 +87,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState>{
 
         final UpdateTask = event.task;
         
-        final res = await _updateTask(UpdateTask);
+        final res = await _updateTask.call(UpdateTask);
 
         res.fold(
           (l){
@@ -95,10 +95,15 @@ class TaskBloc extends Bloc<TaskEvent, TaskState>{
           },
           (r){
             print("Task Updated Succefully");
+
+            //indexWhere : if condition matches return index  else return -1
             int index = _tasks.indexWhere((task)=> task.index == event.task.index);
+
             if(index != -1){
               _tasks[index] = UpdateTask;
+
               emit(TaskUpdateSuccess());
+
             }else{
                emit(TaskFailure("Tasks not Found"));
             }
@@ -120,6 +125,8 @@ class TaskBloc extends Bloc<TaskEvent, TaskState>{
 
           (r){
             print("Task Deleted Successfully");
+
+            //Removes all elements in the list that satisfy a given condition        
             _tasks.removeWhere((task) => task.index == event.index);
             emit(TaskDeleteSuccess());
 
