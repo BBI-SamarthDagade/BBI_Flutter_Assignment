@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart';
 import 'package:news_app/features/daily_news/data/data_source/article_remote.dart';
 import 'package:news_app/features/daily_news/data/repository/article_repo_impl.dart';
 import 'package:news_app/features/daily_news/domain/entity/article.dart';
@@ -15,7 +16,7 @@ void main() {
 
   setUp(() {
        articleBloc = ArticleBloc(FetchArticalUseCase(
-        ArticleRepositoryImplementation(NewsApiServiceImpl())));
+        ArticleRepositoryImplementation(NewsApiServiceImpl(client: Client()))));
   });
 
   Widget createArticleScreen({required Function toggleTheme}) {
