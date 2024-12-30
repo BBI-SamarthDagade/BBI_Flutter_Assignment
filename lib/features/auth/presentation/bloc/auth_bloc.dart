@@ -1,5 +1,44 @@
+// import 'package:flutter_bloc/flutter_bloc.dart';
+// import 'package:taskapp/features/auth/domain/usecases/create_user_use_case.dart';
+// import 'package:taskapp/features/auth/domain/usecases/login_user_use_case.dart';
+// import 'package:taskapp/features/auth/presentation/bloc/auth_event.dart';
+// import 'package:taskapp/features/auth/presentation/bloc/auth_state.dart';
+
+// class AuthBloc extends Bloc<AuthEvent, AuthState> {
+//   final CreateUserUseCase createUserUseCase;
+//   final LoginUserUseCase loginUserUseCase;
+
+//   AuthBloc(this.createUserUseCase, this.loginUserUseCase) : super(AuthInitial()) {
+//     on<AddUserEvent>((event, emit) async {
+//       emit(AuthLoading());
+//       final result = await createUserUseCase.call();
+//       result.fold(
+//         (failure) => emit(AuthFailure("Failed to add user")),
+//         (user) {
+//           emit(AuthSuccess("User added successfully: ${user.userId}"));
+//           emit(AuthLoaded(user));
+//         },
+//       );
+//     });
+
+//     on<LoginUserEvent>((event, emit) async {
+//       emit(AuthLoading());
+//       final result = await loginUserUseCase.call(event.auth);
+//       result.fold(
+//         (failure) => emit(AuthFailure("Login failed")),
+//         (user) {
+//           emit(AuthSuccess("Login successful: ${user.userId}"));
+//           emit(AuthLoaded(user));
+//         },
+//       );
+//     });
+//   }
+// }
+
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taskapp/features/auth/domain/usecases/create_user_use_case.dart';
+import 'package:taskapp/features/auth/domain/usecases/log_out_user_use_case.dart';
 import 'package:taskapp/features/auth/domain/usecases/login_user_use_case.dart';
 import 'package:taskapp/features/auth/presentation/bloc/auth_event.dart';
 import 'package:taskapp/features/auth/presentation/bloc/auth_state.dart';
@@ -7,27 +46,48 @@ import 'package:taskapp/features/auth/presentation/bloc/auth_state.dart';
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final CreateUserUseCase createUserUseCase;
   final LoginUserUseCase loginUserUseCase;
+  final LogOutUserUseCase logOutUserUseCase;
 
-  AuthBloc(this.createUserUseCase, this.loginUserUseCase) : super(AuthInitial()) {
-    
+  AuthBloc(this.createUserUseCase, this.loginUserUseCase, this.logOutUserUseCase)
+      : super(AuthInitial()) {
     on<AddUserEvent>((event, emit) async {
       emit(AuthLoading());
       final result = await createUserUseCase.call();
+
       result.fold(
-        (failure) => emit(AuthFailure("Failed to add user")),
-        (user) => emit(AuthSuccess("User added successfully: ${user.userId}")),
+        (failure) {
+          emit(AuthFailure("Failed to add user"));
+        },
+        (user) async {
+          // final prefs = await SharedPreferences.getInstance();
+          // await prefs.setString('userId', user.userId);
+          emit(AuthSuccess("User added successfully: ${user.userId}"));
+          emit(AuthLoaded(user));
+        },
       );
     });
 
     on<LoginUserEvent>((event, emit) async {
       emit(AuthLoading());
+
       final result = await loginUserUseCase.call(event.auth);
+
       result.fold(
-        (failure) => emit(AuthFailure("Login failed")),
-        (user) => emit(AuthSuccess("Login successful: ${user.userId}")),
+        (failure) {
+          print("inside failure ${failure.message}");
+          emit(AuthFailure("Login failed"));
+        },
+        (user) async {
+          emit(AuthSuccess("Login successful asdf: ${user.userId}"));
+          
+          emit(AuthLoaded(user));
+        },
       );
     });
-  }
-  
-}
 
+    on<LogoutEvent>((event, emit) async {
+      await logOutUserUseCase.call(event.auth);
+      emit(AuthInitial());
+    });
+  }
+}

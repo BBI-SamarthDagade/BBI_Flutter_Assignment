@@ -5,6 +5,7 @@ import 'package:taskapp/features/auth/data/datasources/auth_remote_data_source.d
 import 'package:taskapp/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:taskapp/features/auth/domain/repositories/auth_repository.dart';
 import 'package:taskapp/features/auth/domain/usecases/create_user_use_case.dart';
+import 'package:taskapp/features/auth/domain/usecases/log_out_user_use_case.dart';
 import 'package:taskapp/features/auth/domain/usecases/login_user_use_case.dart';
 
 
@@ -18,7 +19,7 @@ Future<void> setupServiceLocator() async {
   sl.registerLazySingleton<AuthLocalDataSource>(
       () => AuthLocalDataSourceImplementation(sl()));
   sl.registerLazySingleton<AuthRemoteDataSource>(
-      () => AuthRemoteDataSourceImplementation());
+      () => AuthRemoteDataSourceImplementation(sl()));
 
   // Repository
   sl.registerLazySingleton<AuthRepository>(
@@ -27,4 +28,5 @@ Future<void> setupServiceLocator() async {
   // Use cases
   sl.registerLazySingleton(() => CreateUserUseCase(sl()));
   sl.registerLazySingleton(() => LoginUserUseCase(sl()));
+  sl.registerLazySingleton(() => LogOutUserUseCase(sl()));
 }

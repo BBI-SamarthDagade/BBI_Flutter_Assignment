@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:taskapp/features/auth/domain/entities/auth_entity.dart';
 
 abstract class AuthState extends Equatable {
   @override
@@ -25,4 +26,13 @@ class AuthFailure extends AuthState {
 
   @override
   List<Object?> get props => [error];
+}
+
+class AuthLoaded extends AuthState {
+  final AuthEntity auth;
+
+  AuthLoaded(this.auth);
+
+  @override
+  List<Object?> get props => [auth];
 }

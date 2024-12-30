@@ -1,10 +1,84 @@
+// import 'package:flutter/material.dart';
+// import 'package:flutter_bloc/flutter_bloc.dart';
+// import 'package:taskapp/features/auth/presentation/bloc/auth_bloc.dart';
+// import 'package:taskapp/features/auth/presentation/bloc/auth_event.dart';
+// import 'package:taskapp/features/auth/presentation/bloc/auth_state.dart';
+// import 'home_screen.dart';
+// import 'login_screen.dart';
+
+// class AuthScreen extends StatelessWidget {
+//   const AuthScreen({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: const Text("Welcome to TaskApp"),
+//       ),
+//       body: BlocConsumer<AuthBloc, AuthState>(
+//         listener: (context, state) {
+//           if (state is AuthSuccess) {
+//             ScaffoldMessenger.of(context).showSnackBar(
+//               SnackBar(content: Text(state.message)),
+//             );
+//           } else if (state is AuthFailure) {
+//             ScaffoldMessenger.of(context).showSnackBar(
+//               SnackBar(content: Text("Error: ${state.error}")),
+//             );
+//           } else if (state is AuthLoaded) {
+//             Navigator.push(
+//               context,
+//               MaterialPageRoute(
+//                 builder: (context) => HomeScreen(userId: state.auth.userId),
+//               ),
+//             );
+//           }
+//         },
+//         builder: (context, state) {
+//           if (state is AuthLoading) {
+//             return const Center(child: CircularProgressIndicator());
+//           }
+
+//           return Padding(
+//             padding: const EdgeInsets.all(16.0),
+//             child: Column(
+//               mainAxisAlignment: MainAxisAlignment.center,
+//               children: [
+//                 Row(
+//                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//                   children: [
+//                     ElevatedButton(
+//                       onPressed: () {
+//                         context.read<AuthBloc>().add(AddUserEvent());
+//                       },
+//                       child: const Text("Add User"),
+//                     ),
+//                     ElevatedButton(
+//                       onPressed: () {
+//                         Navigator.push(
+//                           context,
+//                           MaterialPageRoute(builder: (context) => const LoginScreen()),
+//                         );
+//                       },
+//                       child: const Text("Login User"),
+//                     ),
+//                   ],
+//                 ),
+//               ],
+//             ),
+//           );
+//         },
+//       ),
+//     );
+//   }
+// }
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:taskapp/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:taskapp/features/auth/presentation/bloc/auth_event.dart';
 import 'package:taskapp/features/auth/presentation/bloc/auth_state.dart';
-import 'package:taskapp/features/auth/presentation/pages/home_screen.dart';
-import 'login_screen.dart';
+
 
 class AuthScreen extends StatelessWidget {
   const AuthScreen({super.key});
@@ -25,11 +99,14 @@ class AuthScreen extends StatelessWidget {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text("Error: ${state.error}")),
             );
+          } else if (state is AuthLoaded) {
+            Navigator.pushReplacementNamed(context, '/home');
+        
           }
         },
         builder: (context, state) {
           if (state is AuthLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return CircularProgressIndicator();
           }
 
           return Padding(
@@ -42,24 +119,13 @@ class AuthScreen extends StatelessWidget {
                   children: [
                     ElevatedButton(
                       onPressed: () {
-                        // Dispatch an event to add a new user
                         context.read<AuthBloc>().add(AddUserEvent());
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const HomeScreen()),
-                        );
                       },
                       child: const Text("Add User"),
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        // Navigate to LoginScreen
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const LoginScreen()),
-                        );
+                        Navigator.pushReplacementNamed(context, '/login');
                       },
                       child: const Text("Login User"),
                     ),

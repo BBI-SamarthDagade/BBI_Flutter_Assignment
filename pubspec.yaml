@@ -18,6 +18,8 @@ dependencies:
   bloc: ^8.1.4
   flutter_bloc: ^8.1.6
   mocktail: ^1.0.4
+  bloc_test: ^9.1.7
+  firebase_core_platform_interface: ^5.4.0
 
 dev_dependencies:
   flutter_test:
