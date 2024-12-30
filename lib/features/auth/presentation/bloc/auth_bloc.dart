@@ -9,6 +9,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final LoginUserUseCase loginUserUseCase;
 
   AuthBloc(this.createUserUseCase, this.loginUserUseCase) : super(AuthInitial()) {
+    
     on<AddUserEvent>((event, emit) async {
       emit(AuthLoading());
       final result = await createUserUseCase.call();
