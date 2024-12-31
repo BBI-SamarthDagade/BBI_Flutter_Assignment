@@ -45,3 +45,6 @@ class LogoutEvent extends AuthEvent {
   final AuthEntity auth;
   LogoutEvent(this.auth);
 }
+class GetUserIdFromLocalEvent extends AuthEvent{
+  
+}

@@ -9,7 +9,7 @@ abstract class AuthRemoteDataSource {
 
 class AuthRemoteDataSourceImplementation extends AuthRemoteDataSource {
   final DatabaseReference _userCounterRef =
-      FirebaseDatabase.instance.ref('user_count');
+      FirebaseDatabase.instance.ref('user_count'); 
   final DatabaseReference _usersRef = FirebaseDatabase.instance.ref('users');
    
    final AuthLocalDataSource authLocalDataSource;
@@ -44,17 +44,15 @@ class AuthRemoteDataSourceImplementation extends AuthRemoteDataSource {
     }
   }
 
-
-
   Future<AuthEntity> loginUser(AuthEntity auth) async {
     try {
       // Retrieve the user data from the database
       final snapshot = await _usersRef.child(auth.userId).get();
-        
+  
       if (snapshot.exists) {
-        print("User login successful: ${auth.userId}");
         await authLocalDataSource.saveUserId(auth.userId);
         return auth;
+        
       } else {
         print("Error: User not registered");
 

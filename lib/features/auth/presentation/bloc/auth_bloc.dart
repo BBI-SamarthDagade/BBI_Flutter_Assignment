@@ -38,6 +38,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taskapp/features/auth/domain/usecases/create_user_use_case.dart';
+import 'package:taskapp/features/auth/domain/usecases/get_user_id_user_case.dart';
 import 'package:taskapp/features/auth/domain/usecases/log_out_user_use_case.dart';
 import 'package:taskapp/features/auth/domain/usecases/login_user_use_case.dart';
 import 'package:taskapp/features/auth/presentation/bloc/auth_event.dart';
@@ -47,11 +48,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final CreateUserUseCase createUserUseCase;
   final LoginUserUseCase loginUserUseCase;
   final LogOutUserUseCase logOutUserUseCase;
+  final GetUserIdUseCase getUserIdUseCase;
 
-  AuthBloc(this.createUserUseCase, this.loginUserUseCase, this.logOutUserUseCase)
+  AuthBloc(this.createUserUseCase, this.loginUserUseCase, this.logOutUserUseCase, this.getUserIdUseCase)
       : super(AuthInitial()) {
+
     on<AddUserEvent>((event, emit) async {
       emit(AuthLoading());
+      
       final result = await createUserUseCase.call();
 
       result.fold(
@@ -62,6 +66,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           // final prefs = await SharedPreferences.getInstance();
           // await prefs.setString('userId', user.userId);
           emit(AuthSuccess("User added successfully: ${user.userId}"));
+          
           emit(AuthLoaded(user));
         },
       );
@@ -71,15 +76,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthLoading());
 
       final result = await loginUserUseCase.call(event.auth);
-
+      
       result.fold(
         (failure) {
           print("inside failure ${failure.message}");
           emit(AuthFailure("Login failed"));
         },
         (user) async {
-          emit(AuthSuccess("Login successful asdf: ${user.userId}"));
-          
+          emit(AuthSuccess("Login successful : ${user.userId}"));     
           emit(AuthLoaded(user));
         },
       );
@@ -89,5 +93,21 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       await logOutUserUseCase.call(event.auth);
       emit(AuthInitial());
     });
+
+
+    on<GetUserIdFromLocalEvent>((event, emit) async {
+       emit(AuthLoading());
+      try {
+        final userId = await getUserIdUseCase.call();
+        if (userId != null) {
+          emit(AuthSuccess("User ID retrieved successfully: $userId"));
+        } else {
+          emit(AuthFailure("No User ID found in local storage"));
+        }
+      } catch (e) {
+        emit(AuthFailure("Error retrieving User ID: $e"));
+      }
+    });
+
   }
 }

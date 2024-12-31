@@ -73,12 +73,16 @@
 //   }
 // }
 
+//privious code
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:taskapp/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:taskapp/features/auth/presentation/bloc/auth_event.dart';
 import 'package:taskapp/features/auth/presentation/bloc/auth_state.dart';
-
+import 'package:taskapp/features/auth/presentation/pages/home_screen.dart';
+import 'package:taskapp/features/auth/presentation/pages/login_screen.dart';
+import 'package:taskapp/features/task/presentation/pages/task_list_screen.dart';
+import 'package:taskapp/features/task/presentation/pages/task_page.dart';
 
 class AuthScreen extends StatelessWidget {
   const AuthScreen({super.key});
@@ -88,6 +92,7 @@ class AuthScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Welcome to TaskApp"),
+        automaticallyImplyLeading: false, 
       ),
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
@@ -100,8 +105,14 @@ class AuthScreen extends StatelessWidget {
               SnackBar(content: Text("Error: ${state.error}")),
             );
           } else if (state is AuthLoaded) {
-            Navigator.pushReplacementNamed(context, '/home');
-        
+            // Navigator.pushReplacementNamed(context, '/home');
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+               // builder: (context) => HomeScreen(userId: state.auth.userId),
+               builder: (context) => TaskListScreen(),
+              ),
+            );
           }
         },
         builder: (context, state) {
@@ -125,7 +136,12 @@ class AuthScreen extends StatelessWidget {
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        Navigator.pushReplacementNamed(context, '/login');
+                        // Navigator.pushReplacementNamed(context, '/login');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const LoginScreen()),
+                        );
                       },
                       child: const Text("Login User"),
                     ),
