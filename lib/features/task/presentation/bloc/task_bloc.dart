@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:taskapp/features/task/domain/entities/task_entity.dart';
 import 'package:taskapp/features/task/domain/usecases/add_task_use_case.dart';
@@ -43,13 +45,14 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
 
     Future<void> _onAddTask(AddTaskEvent event, Emitter<TaskState> emit) async{
+      emit(TaskLoading());
+
       final res = await _addTaskUseCase.call(event.task, event.userId);
 
       res.fold(
          (l){
             emit(TaskFailure(l.message));
-         }
-         , 
+         }, 
          (r){
             _tasks.add(event.task);
             _tasks = _sortTasksByDueDate(_tasks);
@@ -80,14 +83,16 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
    
    Future<void> _onDeleteTask(DeleteTaskEvent event, Emitter<TaskState> emit) async {
     emit(TaskLoading());
-    
-    final res = await _deleteTaskUseCase.call(event.userId , event.taskId);
+    print("in bloc.............${event.taskId}");
+    final res = await _deleteTaskUseCase.call(event.taskId, event.userId);
 
     res.fold(
       (l) => emit(TaskFailure(l.message)),
       (r) {
         // Remove the task from the sorted list
-        _tasks.removeWhere((task) => task.taskId == event.taskId);
+       _tasks.removeWhere((task) => task.taskId == event.taskId);
+      print("inside bloc task id is ${event.taskId}");
+       print(_tasks);
         emit(TaskLoaded(_tasks));
       },
     );
@@ -95,7 +100,8 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   
     // Handle fetching tasks
   Future<void> _onFetchTask( LoadTasksEvent event, Emitter<TaskState> emit) async {
-      
+
+    print("bloc loading task ${event.userId}");
     emit(TaskLoading());
     final res = await _getAllTasksUseCase.call(event.userId);
     res.fold(
@@ -103,7 +109,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
         emit(TaskFailure(l.message));
       },
       (r) {
-         _tasks = _sortTasksByDueDate(_tasks);
+         _tasks = _sortTasksByDueDate(r);
         emit(TaskLoaded(_tasks));
       },
     );

@@ -1,8 +1,6 @@
 import 'package:taskapp/features/task/domain/entities/task_entity.dart';
 
-abstract class TaskEvent {
-
-}
+abstract class TaskEvent {}
 
 class LoadTasksEvent extends TaskEvent {
   final String userId;

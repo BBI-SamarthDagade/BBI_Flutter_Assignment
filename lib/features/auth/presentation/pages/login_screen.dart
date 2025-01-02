@@ -96,7 +96,6 @@ import 'package:taskapp/features/auth/domain/entities/auth_entity.dart';
 import 'package:taskapp/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:taskapp/features/auth/presentation/bloc/auth_event.dart';
 import 'package:taskapp/features/auth/presentation/bloc/auth_state.dart';
-import 'package:taskapp/features/auth/presentation/pages/home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -123,12 +122,8 @@ class _LoginScreenState extends State<LoginScreen> {
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthSuccess) {
-            // Navigate to the home screen upon successful login
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => HomeScreen(userId: _userIdController.text.trim()),
-              ),
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Successfully Logged In")),
             );
           } else if (state is AuthFailure) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -149,7 +144,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 TextField(
                   controller: _userIdController,
                   decoration: const InputDecoration(
+                    
                     labelText: "Enter User ID",
+                    icon: Icon(Icons.person),
                     border: OutlineInputBorder(),
                   ),
                 ),

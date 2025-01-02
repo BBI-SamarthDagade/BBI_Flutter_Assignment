@@ -6,7 +6,7 @@ class DeleteTaskUseCase {
 
     DeleteTaskUseCase(this.taskRepositoryImpl);
 
-    Future<Either<Failure, void>> call(String userId, String taskId){
-        return taskRepositoryImpl.deleteTask(userId, taskId);
+    Future<Either<Failure, void>> call(String taskId, String userId){
+        return taskRepositoryImpl.deleteTask(taskId, userId);
     }
 }

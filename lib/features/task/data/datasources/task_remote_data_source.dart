@@ -37,10 +37,13 @@ class TaskRemoteDataSourceImplementation extends TaskRemoteDataSource {
 
 
   @override
-  Future<void> deleteTask(String taskId, String userId) async{
+  Future<void> deleteTask(String taskId, String userId)async{
+
+    print("task id of task is inside data_source $taskId");
 
     final userTaskRef = _taskRef.child(userId).child(taskId);
 
+     
     try {
       await userTaskRef.remove();
       print("task with id $taskId of user $userId deleted succefully");
@@ -66,22 +69,36 @@ class TaskRemoteDataSourceImplementation extends TaskRemoteDataSource {
   
   @override
 Future<List<TaskEntity>> getTasks(String userId) async {
+
+
   final userTaskRef = _taskRef.child(userId);
 
   try {
+
     // Retrieve a DataSnapshot from the database
     final DataSnapshot snapshot = await userTaskRef.get();
-
+     
     // Check if data exists
     if (snapshot.exists) {
       // Convert the snapshot value to a map
       final tasksMap = Map<String, dynamic>.from(snapshot.value as Map);
 
       // Map each entry to a TaskEntity and return the list
-      return tasksMap.entries.map((entry) {
-        final taskData = Map<String, dynamic>.from(entry.value);
-        return TaskEntity.fromMap(taskData);
-      }).toList();
+      // return tasksMap.entries.map((entry) {
+      //   final taskData = Map<String, dynamic>.from(entry.value);
+      //   return TaskEntity.fromMap(taskData);
+      // }).toList();
+
+      List<TaskEntity> tasks=[];
+      
+      tasksMap.forEach((id,taskData){
+          tasks.add(TaskEntity.fromMap(taskData,id));
+      });
+
+
+      print(tasks);
+
+      return tasks;
     } else {
       // Return an empty list if no tasks exist for the user
       return [];
@@ -92,6 +109,44 @@ Future<List<TaskEntity>> getTasks(String userId) async {
     return [];
   }
 } 
+
+// Future<List<TaskEntity>> getTasks(String userId) async {
+//   final userTaskRef = _taskRef.child(userId);
+
+//   try {
+//     // Retrieve a DataSnapshot from the database
+//     final DataSnapshot snapshot = await userTaskRef.get();
+   
+//     // Check if data exists and is a Map
+//     if (snapshot.exists && snapshot.value is Map) {
+      
+//       // Convert the snapshot value to a map
+//       final tasksMap = Map<String, dynamic>.from(snapshot.value as Map);
+      
+//       // Map each entry to a TaskEntity and return the list
+//       return tasksMap.entries.map((entry) {
+//         // Ensure entry.value is a Map before converting
+//         if (entry.value is Map) {
+//           final taskData = Map<String, dynamic>.from(entry.value);
+//           return TaskEntity.fromMap(taskData);
+//         } else {
+//           // Handle unexpected value types
+//           print("Invalid task data for key: ${entry.key}");
+//           return null; // or throw an exception, depending on your needs
+//         }
+//       }).whereType<TaskEntity>().toList(); // Filter out nulls
+
+//     } else {
+//       // Return an empty list if no tasks exist for the user
+//       return [];
+//     }
+//   } catch (e) {
+//     // Handle any errors that occur during the operation
+//     print("Error retrieving tasks for user $userId: $e");
+//     return [];
+//   }
+// }
+
 }
 
 //structre of Json in Firebase Realtime Database
