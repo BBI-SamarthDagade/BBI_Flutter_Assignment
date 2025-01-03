@@ -4,7 +4,7 @@
 // import 'package:taskapp/features/auth/presentation/bloc/auth_bloc.dart';
 // import 'package:taskapp/features/auth/presentation/bloc/auth_event.dart';
 // import 'package:taskapp/features/auth/presentation/bloc/auth_state.dart';
-// import 'package:taskapp/features/auth/presentation/pages/home_screen.dart';
+// import 'package:taskapp/features/task/presentation/pages/task_list_screen.dart';
 
 // class LoginScreen extends StatefulWidget {
 //   const LoginScreen({super.key});
@@ -31,22 +31,24 @@
 //       body: BlocConsumer<AuthBloc, AuthState>(
 //         listener: (context, state) {
 //           if (state is AuthSuccess) {
-//             ScaffoldMessenger.of(context).showSnackBar(
-//               SnackBar(content: Text(state.message)),
-//             );
+//             // ScaffoldMessenger.of(context).showSnackBar(
+//             //   SnackBar(content: Text("Successfully Logged In")),
+//             // );
 //           } else if (state is AuthFailure) {
 //             ScaffoldMessenger.of(context).showSnackBar(
 //               SnackBar(content: Text(state.error)),
 //             );
 //           } 
-//           // else if (state is AuthLoaded) {
-//           //   Navigator.push(
-//           //     context,
-//           //     MaterialPageRoute(
-//           //       builder: (context) => HomeScreen(userId: state.auth.userId),
-//           //     ),
-//           //   );
-//           // }
+//           else if (state is AuthLoaded) {
+     
+//             Navigator.pushReplacement(
+//               context,
+//               MaterialPageRoute(
+//                 // builder: (context) => HomeScreen(userId: state.auth.userId),
+//                  builder: (context) => TaskListScreen(state.auth.userId),
+//               ),
+//             );
+//           }
 //         },
 //         builder: (context, state) {
 //           if (state is AuthLoading) {
@@ -61,7 +63,9 @@
 //                 TextField(
 //                   controller: _userIdController,
 //                   decoration: const InputDecoration(
+                    
 //                     labelText: "Enter User ID",
+//                     icon: Icon(Icons.person),
 //                     border: OutlineInputBorder(),
 //                   ),
 //                 ),
@@ -89,13 +93,14 @@
 //   }
 // }
 
-//previous code
+//named route
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:taskapp/features/auth/domain/entities/auth_entity.dart';
 import 'package:taskapp/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:taskapp/features/auth/presentation/bloc/auth_event.dart';
 import 'package:taskapp/features/auth/presentation/bloc/auth_state.dart';
+import 'package:taskapp/features/task/presentation/pages/task_list_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -122,14 +127,23 @@ class _LoginScreenState extends State<LoginScreen> {
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("Successfully Logged In")),
-            );
+            // ScaffoldMessenger.of(context).showSnackBar(
+            //   SnackBar(content: Text("Successfully Logged In")),
+            // );
           } else if (state is AuthFailure) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(state.error)),
             );
           } 
+          else if (state is AuthLoaded) {
+     
+            
+            Navigator.pushReplacementNamed(context, '/taskList',
+            arguments: {
+              "userId":state.auth.userId
+            }
+            );
+          }
         },
         builder: (context, state) {
           if (state is AuthLoading) {
@@ -154,6 +168,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 ElevatedButton(
                   onPressed: () {
                     final userId = _userIdController.text.trim();
+                    print("in login view");
+                    print(userId);
                     if (userId.isNotEmpty) {
                       final auth = AuthEntity(userId: userId);
                       context.read<AuthBloc>().add(LoginUserEvent(auth));

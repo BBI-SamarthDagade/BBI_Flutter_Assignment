@@ -53,7 +53,7 @@
 //                   .read<AuthBloc>()
 //                   .add(LogoutEvent(AuthEntity(userId: widget.userId)));
 
-//               Navigator.push(
+//               Navigator.pushReplacement(
 //                 context,
 //                 MaterialPageRoute(builder: (context) => const AuthScreen()),
 //               );
@@ -102,8 +102,11 @@
 //           } else if (state is TaskLoaded) {
 //             List<TaskEntity> tasks = state.tasks;
 
-//             if (!_sortByDueDate) {
-//               tasks.sort((a, b) => a.priority.index.compareTo(b.priority.index));
+//             // Sorting logic
+//             if (_sortByDueDate) {
+//               tasks.sort((a, b) => a.dueDate.compareTo(b.dueDate));
+//             } else {
+//               tasks.sort((a, b) => b.priority.index.compareTo(a.priority.index));
 //             }
 
 //             if (tasks.isEmpty) {
@@ -117,8 +120,13 @@
 //               itemBuilder: (context, index) {
 //                 final task = tasks[index];
 //                 return Dismissible(
+//                   background:  Container(
+//                      color: Colors.red,
+//                      child: Icon(Icons.delete, color: Colors.white),
+//                   ),
 //                   key: Key(task.taskId),
 //                   onDismissed: (_) {
+
 //                     BlocProvider.of<TaskBloc>(context)
 //                         .add(DeleteTaskEvent(task.taskId, widget.userId));
 //                   },
@@ -237,19 +245,17 @@
 // }
 
 
+//named route code
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:taskapp/features/auth/domain/entities/auth_entity.dart';
 import 'package:taskapp/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:taskapp/features/auth/presentation/bloc/auth_event.dart';
-import 'package:taskapp/features/auth/presentation/pages/auth_page.dart';
 import 'package:taskapp/features/task/data/datasources/task_local_data_source.dart';
 import 'package:taskapp/features/task/domain/entities/task_entity.dart';
 import 'package:taskapp/features/task/presentation/bloc/task_bloc.dart';
 import 'package:taskapp/features/task/presentation/bloc/task_event.dart';
 import 'package:taskapp/features/task/presentation/bloc/task_state.dart';
-import 'package:taskapp/features/task/presentation/pages/add_task_screen.dart';
-
 
 class TaskListScreen extends StatefulWidget {
   final String userId;
@@ -266,6 +272,8 @@ class _TaskListScreenState extends State<TaskListScreen> {
   @override
   void initState() {
     super.initState();
+    print("id in task screen");
+    print(widget.userId);
     _loadPreferences();
     BlocProvider.of<TaskBloc>(context).add(LoadTasksEvent(widget.userId));
   }
@@ -292,11 +300,10 @@ class _TaskListScreenState extends State<TaskListScreen> {
               context
                   .read<AuthBloc>()
                   .add(LogoutEvent(AuthEntity(userId: widget.userId)));
+                   
+                   Navigator.pushReplacementNamed(context, '/auth');
 
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const AuthScreen()),
-              );
+                // Navigator.of(context).pushNamedAndRemoveUntil('/auth', (route) => false);
             },
           ),
           PopupMenuButton<String>(
@@ -307,14 +314,8 @@ class _TaskListScreenState extends State<TaskListScreen> {
               });
             },
             itemBuilder: (context) => [
-              PopupMenuItem(
-                value: 'Due Date',
-                child: Text('Sort by Due Date'),
-              ),
-              PopupMenuItem(
-                value: 'Priority',
-                child: Text('Sort by Priority'),
-              ),
+              PopupMenuItem(value: 'Due Date', child: Text('Sort by Due Date')),
+              PopupMenuItem(value: 'Priority', child: Text('Sort by Priority')),
             ],
           ),
         ],
@@ -322,23 +323,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
       body: BlocBuilder<TaskBloc, TaskState>(
         builder: (context, state) {
           if (state is TaskLoading) {
-            return AlertDialog(
-              contentPadding: EdgeInsets.all(20),
-              title: Center(
-                child: Text(
-                  "Loading Tasks.....",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-              ),
-              content: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator(),
-                  SizedBox(width: 20),
-                  Text("Please wait..."),
-                ],
-              ),
-            );
+            return Center(child: CircularProgressIndicator());
           } else if (state is TaskLoaded) {
             List<TaskEntity> tasks = state.tasks;
 
@@ -346,13 +331,14 @@ class _TaskListScreenState extends State<TaskListScreen> {
             if (_sortByDueDate) {
               tasks.sort((a, b) => a.dueDate.compareTo(b.dueDate));
             } else {
-              tasks.sort((a, b) => b.priority.index.compareTo(a.priority.index));
+              tasks
+                  .sort((a, b) => b.priority.index.compareTo(a.priority.index));
             }
 
             if (tasks.isEmpty) {
               return Center(
-                child: Text("No tasks added", style: TextStyle(fontSize: 18)),
-              );
+                  child:
+                      Text("No tasks added", style: TextStyle(fontSize: 18)));
             }
 
             return ListView.builder(
@@ -360,6 +346,9 @@ class _TaskListScreenState extends State<TaskListScreen> {
               itemBuilder: (context, index) {
                 final task = tasks[index];
                 return Dismissible(
+                  background: Container(
+                      color: Colors.red,
+                      child: Icon(Icons.delete, color: Colors.white)),
                   key: Key(task.taskId),
                   onDismissed: (_) {
                     BlocProvider.of<TaskBloc>(context)
@@ -368,10 +357,8 @@ class _TaskListScreenState extends State<TaskListScreen> {
                   child: Card(
                     margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                     child: ExpansionTile(
-                      title: Text(
-                        task.title,
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
+                      title: Text(task.title,
+                          style: TextStyle(fontWeight: FontWeight.bold)),
                       subtitle: Text('Due: ${task.dueDate}'),
                       children: [
                         Padding(
@@ -380,16 +367,14 @@ class _TaskListScreenState extends State<TaskListScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               _buildDetailRow(
-                                icon: Icons.description,
-                                title: 'Description',
-                                value: task.description,
-                              ),
-                              SizedBox(height: 16), // Space between sections
+                                  icon: Icons.description,
+                                  title: 'Description',
+                                  value: task.description),
+                              SizedBox(height: 16),
                               _buildDetailRow(
-                                icon: Icons.priority_high_rounded,
-                                title: 'Priority',
-                                value: task.priority.name,
-                              ),
+                                  icon: Icons.priority_high_rounded,
+                                  title: 'Priority',
+                                  value: task.priority.name),
                             ],
                           ),
                         ),
@@ -400,14 +385,14 @@ class _TaskListScreenState extends State<TaskListScreen> {
                           IconButton(
                             icon: Icon(Icons.edit, color: Colors.blue),
                             onPressed: () {
-                              Navigator.push(
+                              Navigator.pushNamed(
                                 context,
-                                MaterialPageRoute(
-                                  builder: (context) => AddTaskScreen(
-                                    widget.userId,
-                                    task: task,
-                                  ),
-                                ),
+                                '/addTask',
+                                // arguments: {widget.userId, task},
+                                arguments: {
+                                  'userId': widget.userId,
+                                  'task': task, // pass the task if needed
+                                },
                               ).then((_) {
                                 BlocProvider.of<TaskBloc>(context)
                                     .add(LoadTasksEvent(widget.userId));
@@ -436,11 +421,13 @@ class _TaskListScreenState extends State<TaskListScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.push(
+          Navigator.pushNamed(
             context,
-            MaterialPageRoute(
-              builder: (context) => AddTaskScreen(widget.userId),
-            ),
+            '/addTask',
+            arguments: {
+              'userId': widget.userId,
+              'task': null, // pass the task if needed
+            },
           ).then((_) {
             BlocProvider.of<TaskBloc>(context)
                 .add(LoadTasksEvent(widget.userId));
@@ -451,11 +438,8 @@ class _TaskListScreenState extends State<TaskListScreen> {
     );
   }
 
-  Widget _buildDetailRow({
-    required IconData icon,
-    required String title,
-    required String value,
-  }) {
+  Widget _buildDetailRow(
+      {required IconData icon, required String title, required String value}) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -465,10 +449,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                title,
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
+              Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
               SizedBox(height: 4),
               Text(value),
             ],

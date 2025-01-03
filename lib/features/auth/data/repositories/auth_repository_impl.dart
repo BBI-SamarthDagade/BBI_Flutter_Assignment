@@ -47,6 +47,7 @@ class AuthRepositoryImpl extends AuthRepository {
   
   @override
   Future<Either<Failure, void>> logoutUser(AuthEntity auth) async{
+    print("in logout repo impl ${auth.userId}");
       try {
         await authLocalDataSource.clearUserId();
         return const Right(null);

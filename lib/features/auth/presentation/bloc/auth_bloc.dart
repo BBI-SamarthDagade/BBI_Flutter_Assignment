@@ -57,7 +57,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthLoading());
       
       final result = await createUserUseCase.call();
-
+      print(result);
       result.fold(
         (failure) {
           emit(AuthFailure("Failed to add user"));
@@ -75,15 +75,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<LoginUserEvent>((event, emit) async {
       emit(AuthLoading());
 
+      print("login success ${event.auth.userId}");
       final result = await loginUserUseCase.call(event.auth);
-      
       result.fold(
         (failure) {
           print("inside failure ${failure.message}");
           emit(AuthFailure("Login failed"));
         },
         (user) async {
-          emit(AuthSuccess("Login successful : ${user.userId}"));     
+          print("on login sucess");
+          print(user.userId);
+          emit(AuthSuccess("Login successful : ${user.userId}")); 
           emit(AuthLoaded(user));
         },
       );
