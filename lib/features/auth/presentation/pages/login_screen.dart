@@ -160,7 +160,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   decoration: const InputDecoration(
                     
                     labelText: "Enter User ID",
-                    icon: Icon(Icons.person),
+                    icon: Icon(Icons.person, size: 40),
+                    iconColor: Colors.lightBlue,
+                    
                     border: OutlineInputBorder(),
                   ),
                 ),

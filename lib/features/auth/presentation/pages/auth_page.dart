@@ -181,7 +181,7 @@ class AuthScreen extends StatelessWidget {
                     ElevatedButton(
                       onPressed: () {
                         context.read<AuthBloc>().add(AddUserEvent());
-                       
+                         
                       },
                       child: const Text("Create User"),
                     ),

@@ -5,113 +5,145 @@ import 'package:taskapp/features/task/data/datasources/task_remote_data_source.d
 import 'package:taskapp/features/task/domain/entities/task_entity.dart';
 
 // Mock classes
-class MockDatabaseReference extends Mock implements DatabaseReference {}
-
 class MockFirebaseDatabase extends Mock implements FirebaseDatabase {}
-
+class MockDatabaseReference extends Mock implements DatabaseReference {}
 class MockDataSnapshot extends Mock implements DataSnapshot {}
 
 void main() {
-  late TaskRemoteDataSourceImplementation taskRemoteDataSource;
-  late MockDatabaseReference mockDatabaseReference;
+  late TaskRemoteDataSourceImplementation remoteDataSource;
+  late MockFirebaseDatabase mockFirebaseDatabase;
+  late MockDatabaseReference mockTaskRef;
+  late MockDatabaseReference mockTaskChildRef;
   late MockDataSnapshot mockDataSnapshot;
 
+  const testUserId = 'user_1';
+  const testTaskId = '-OFLzZqmd35yPy2kU86i';
+
+  final testTask = TaskEntity(
+    testTaskId,
+    'Test Task',
+     'Test task description',
+    DateTime.now(),
+    Priority.high,
+  );
+
   setUp(() {
-    mockDatabaseReference = MockDatabaseReference();
+    // Initialize mock instances
+    mockFirebaseDatabase = MockFirebaseDatabase();
+    mockTaskRef = MockDatabaseReference();
+    mockTaskChildRef = MockDatabaseReference();
     mockDataSnapshot = MockDataSnapshot();
 
-    // Mock the instance of FirebaseDatabase to return the mocked DatabaseReference
-    when(() => FirebaseDatabase.instance).thenReturn(MockFirebaseDatabase());
-    when(() => FirebaseDatabase.instance.ref('tasks')).thenReturn(mockDatabaseReference);
+    // Mock Firebase methods for task-related operations
+    when(() => mockFirebaseDatabase.ref('tasks')).thenReturn(mockTaskRef);
 
-    taskRemoteDataSource = TaskRemoteDataSourceImplementation();
+    // Initialize the data source with the mocked Firebase
+    remoteDataSource = TaskRemoteDataSourceImplementation(mockFirebaseDatabase);
+
+    // Mock the user-specific task reference for task operations
+    when(() => mockTaskRef.child(testUserId)).thenReturn(mockTaskRef);
   });
 
-  group('TaskRemoteDataSourceImplementation', () {
-    const userId = 'user_1';
-    const taskId = 'task_1';
-    final taskEntity = TaskEntity( taskId, 'Test Task',  'Test Description',DateTime(2024, 1, 7), Priority.high);
+  group('TaskRemoteDataSourceImpl', () {
 
-    test('addTask should add a task to the database', () async {
+    test('should add a task successfully', () async {
       // Arrange
-      final taskRef = mockDatabaseReference.child(userId).child(taskEntity.taskId);
-      when(() => taskRef.push()).thenReturn(taskRef);
-      when(() => taskRef.set(any())).thenAnswer((_) async {});
+      final taskRefe = MockDatabaseReference();
+      when(() => mockTaskRef.push()).thenReturn(taskRefe);
+      when(() => taskRefe.set(any())).thenAnswer((_) async => Future.value());
 
       // Act
-      await taskRemoteDataSource.addTask(userId, taskEntity);
+      await remoteDataSource.addTask(testUserId, testTask);
 
       // Assert
-      verify(() => taskRef.set(taskEntity.toMap())).called(1);
+      verify(() => taskRefe.set(any())).called(1); // Ensure set was called once
     });
 
-    test('deleteTask should remove a task from the database', () async {
+    test('should return failure when adding task fails', () async {
       // Arrange
-      final userTaskRef = mockDatabaseReference.child(userId).child(taskId);
-      when(() => userTaskRef.remove()).thenAnswer((_) async {});
+      final taskRefe = MockDatabaseReference();
+      when(() => mockTaskRef.push()).thenReturn(taskRefe);
+      when(() => taskRefe.set(any())).thenThrow(Exception("Error adding task for user"));
+
+      // Act & Assert
+      expect(() async => await remoteDataSource.addTask(testUserId, testTask),
+          throwsException); // Expect exception to be thrown
+    });
+  
+
+    test('should delete a task successfully', () async {
+      // Arrange
+      when(() => mockTaskRef.child(testTaskId)).thenReturn(mockTaskChildRef);
+      when(() => mockTaskChildRef.remove()).thenAnswer((_) async => Future.value());
 
       // Act
-      await taskRemoteDataSource.deleteTask(taskId, userId);
+      await remoteDataSource.deleteTask(testTaskId,testUserId);
 
       // Assert
-      verify(() => userTaskRef.remove()).called(1);
+      verify(() => mockTaskChildRef.remove()).called(1); // Ensure remove was called once
     });
 
-    test('updateTask should update a task in the database', () async {
+    test('should return failure when deleting task fails', () async {
       // Arrange
-      final taskRef = mockDatabaseReference.child(userId).child(taskEntity.taskId);
-      when(() => taskRef.update(any())).thenAnswer((_) async {});
+      when(() => mockTaskRef.child(testTaskId)).thenReturn(mockTaskChildRef);
+      when(() => mockTaskChildRef.remove()).thenThrow(Exception("Failed to delete task"));
+
+      // Act & Assert
+      expect(() async => await remoteDataSource.deleteTask(testTaskId,testUserId),
+          throwsException); // Expect exception to be thrown
+    });
+
+    test('should edit a task successfully', () async {
+      // Arrange
+      when(() => mockTaskRef.child(testTaskId)).thenReturn(mockTaskChildRef);
+      when(() => mockTaskChildRef.update(any())).thenAnswer((_) async => Future.value());
 
       // Act
-      await taskRemoteDataSource.updateTask(userId, taskEntity);
+      await remoteDataSource.updateTask(testUserId, testTask);
 
       // Assert
-      verify(() => taskRef.update(taskEntity.toMap())).called(1);
+      verify(() => mockTaskChildRef.update(any())).called(1); // Ensure update was called once
     });
 
-    test('getTasks should return a list of tasks', () async {
+    test('should return failure when editing task fails', () async {
       // Arrange
-      when(() => mockDatabaseReference.child(userId)).thenReturn(mockDatabaseReference);
-      when(() => mockDatabaseReference.get()).thenAnswer((_) async => mockDataSnapshot);
+      when(() => mockTaskRef.child(testTaskId)).thenReturn(mockTaskChildRef);
+      when(() => mockTaskChildRef.update(any())).thenThrow(Exception("Failed to update task"));
+
+      // Act & Assert
+      expect(() async => await remoteDataSource.updateTask(testUserId, testTask),
+          throwsException); // Expect exception to be thrown
+    });
+
+    test('should fetch all tasks successfully', () async {
+      // Arrange
+      final tasksMap = {
+        '-OFLzZqmd35yPy2kU86i': {
+          'description': 'Test task description',
+          'dueDate': DateTime.now().toIso8601String(),
+          'priority': 'high',
+          'title': 'Test Task'
+        },
+      };
+      when(() => mockTaskRef.get()).thenAnswer((_) async => mockDataSnapshot);
       when(() => mockDataSnapshot.exists).thenReturn(true);
-      when(() => mockDataSnapshot.value).thenReturn({
-        'task_1': {'title': 'Task 1', 'description': 'Description 1'},
-        'task_2': {'title': 'Task 2', 'description': 'Description 2'},
-      });
+      when(() => mockDataSnapshot.value).thenReturn(tasksMap);
 
       // Act
-      final result = await taskRemoteDataSource.getTasks(userId);
+      final result = await remoteDataSource.getTasks(testUserId);
 
       // Assert
-      expect(result, isA<List<TaskEntity>>());
-      expect(result.length, 2);
-      expect(result[0].title, 'Task 1');
-      expect(result[1].title, 'Task 2');
+      expect(result.length, 1);  // Expect one task
+      expect(result[0].title, 'Test Task');  // Check the title of the task
     });
 
-    test('getTasks should return an empty list if no tasks exist', () async {
+    test('should return failure when fetching tasks fails', () async {
       // Arrange
-      when(() => mockDatabaseReference.child(userId)).thenReturn(mockDatabaseReference);
-      when(() => mockDatabaseReference.get()).thenAnswer((_) async => mockDataSnapshot);
-      when(() => mockDataSnapshot.exists).thenReturn(false);
+      when(() => mockTaskRef.get()).thenThrow(Exception("Failed to fetch tasks"));
 
-      // Act
-      final result = await taskRemoteDataSource.getTasks(userId);
-
-      // Assert
-      expect(result, []);
-    });
-
-    test('getTasks should return an empty list on error', () async {
-      // Arrange
-      when(() => mockDatabaseReference.child(userId)).thenReturn(mockDatabaseReference);
-      when(() => mockDatabaseReference.get()).thenThrow(Exception('Error fetching tasks'));
-
-      // Act
-      final result = await taskRemoteDataSource.getTasks(userId);
-
-      // Assert
-      expect(result, []);
+      // Act & Assert
+      expect(() async => await remoteDataSource.getTasks(testUserId),
+          throwsException); // Expect exception to be thrown
     });
   });
 }

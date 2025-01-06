@@ -6,8 +6,8 @@ import 'package:mocktail/mocktail.dart';
 import 'package:taskapp/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:taskapp/features/auth/presentation/bloc/auth_event.dart';
 import 'package:taskapp/features/auth/presentation/bloc/auth_state.dart';
-import 'package:taskapp/features/auth/presentation/pages/home_screen.dart';
 import 'package:taskapp/features/auth/presentation/pages/login_screen.dart';
+import 'package:taskapp/features/task/presentation/pages/task_list_screen.dart';
 
 class MockAuthBloc extends MockBloc<AuthEvent, AuthState> implements AuthBloc {}
 
@@ -58,7 +58,7 @@ void main() {
     expect(find.byType(LoginScreen), findsOneWidget);
 
     // Optional: Verify that no navigation occurred
-    expect(find.byType(HomeScreen), findsNothing);
+    expect(find.byType(TaskListScreen), findsNothing);
 
     // Optional: Verify error feedback (e.g., SnackBar)
     expect(find.text('Please enter a valid User ID'), findsOneWidget);

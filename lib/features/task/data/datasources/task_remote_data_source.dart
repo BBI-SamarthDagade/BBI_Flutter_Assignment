@@ -224,7 +224,8 @@ class TaskRemoteDataSourceImplementation extends TaskRemoteDataSource {
   } 
   catch (e) {
     // Handle any errors that occur during the operation
-    print("Error adding task for user $userId: $e");
+    print("Error adding task for user");
+    throw e;
   }
 }
 
@@ -241,7 +242,8 @@ class TaskRemoteDataSourceImplementation extends TaskRemoteDataSource {
       print("task with id $taskId of user $userId deleted succefully");
     } 
     catch (e) {
-       print("Error deleting task with ID $taskId for user $userId: $e");
+       print("Failed to delete task");
+       throw e;
     }
     
   }
@@ -255,7 +257,8 @@ class TaskRemoteDataSourceImplementation extends TaskRemoteDataSource {
         await taskRef.update(task.toMap());
       } catch (e) {
          // Handle any errors during the update
-         print("Error updating task with ID ${task.taskId} for user $userId: $e");
+         print("Failed to update task");
+         throw e;
       }
   }
   
@@ -275,12 +278,6 @@ Future<List<TaskEntity>> getTasks(String userId) async {
       // Convert the snapshot value to a map
       final tasksMap = Map<String, dynamic>.from(snapshot.value as Map);
 
-      // Map each entry to a TaskEntity and return the list
-      // return tasksMap.entries.map((entry) {
-      //   final taskData = Map<String, dynamic>.from(entry.value);
-      //   return TaskEntity.fromMap(taskData);
-      // }).toList();
-
       List<TaskEntity> tasks=[];
       
       tasksMap.forEach((id,taskData){
@@ -296,47 +293,11 @@ Future<List<TaskEntity>> getTasks(String userId) async {
     }
   } catch (e) {
     // Handle any errors that occur during the operation
-    print("Error retrieving tasks for user $userId: $e");
+    print("Failed to Fetch Task");
+    throw e;
     return [];
   }
 } 
-
-// Future<List<TaskEntity>> getTasks(String userId) async {
-//   final userTaskRef = _taskRef.child(userId);
-
-//   try {
-//     // Retrieve a DataSnapshot from the database
-//     final DataSnapshot snapshot = await userTaskRef.get();
-   
-//     // Check if data exists and is a Map
-//     if (snapshot.exists && snapshot.value is Map) {
-      
-//       // Convert the snapshot value to a map
-//       final tasksMap = Map<String, dynamic>.from(snapshot.value as Map);
-      
-//       // Map each entry to a TaskEntity and return the list
-//       return tasksMap.entries.map((entry) {
-//         // Ensure entry.value is a Map before converting
-//         if (entry.value is Map) {
-//           final taskData = Map<String, dynamic>.from(entry.value);
-//           return TaskEntity.fromMap(taskData);
-//         } else {
-//           // Handle unexpected value types
-//           print("Invalid task data for key: ${entry.key}");
-//           return null; // or throw an exception, depending on your needs
-//         }
-//       }).whereType<TaskEntity>().toList(); // Filter out nulls
-
-//     } else {
-//       // Return an empty list if no tasks exist for the user
-//       return [];
-//     }
-//   } catch (e) {
-//     // Handle any errors that occur during the operation
-//     print("Error retrieving tasks for user $userId: $e");
-//     return [];
-//   }
-// }
 
 }
 
