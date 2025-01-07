@@ -26,9 +26,13 @@ void main() {
         ),
       );
 
-      expect(find.text('Add Task'), findsOneWidget);
+      expect(find.text('Add Task'), findsOneWidget);  
       expect(find.byType(TextFormField), findsNWidgets(3)); // Title, Description, Due Date
       expect(find.byType(DropdownButtonFormField<Priority>), findsOneWidget);
+      expect(find.byIcon(Icons.calendar_today), findsOneWidget);
+      expect(find.byIcon(Icons.calendar_today), findsOneWidget);
+      expect(find.byType(ElevatedButton), findsOneWidget);
+
     });
 
     testWidgets('validates input fields', (WidgetTester tester) async {
@@ -67,6 +71,9 @@ void main() {
       expect(find.byType(TextFormField), findsNWidgets(3)); // Title, Description, Due Date
       expect(find.text('Existing Task'), findsOneWidget);
       expect(find.text('Existing Description'), findsOneWidget);
+      expect(find.byType(DropdownButtonFormField<Priority>), findsOneWidget);
+      expect(find.byIcon(Icons.calendar_today), findsOneWidget);
+      expect(find.byType(ElevatedButton), findsOneWidget);
     });
   });
 }
