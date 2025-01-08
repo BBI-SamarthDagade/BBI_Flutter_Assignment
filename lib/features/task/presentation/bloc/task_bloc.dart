@@ -83,7 +83,6 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
    
    Future<void> _onDeleteTask(DeleteTaskEvent event, Emitter<TaskState> emit) async {
     emit(TaskLoading());
-    print("in bloc.............${event.taskId}");
     final res = await _deleteTaskUseCase.call(event.taskId, event.userId);
 
     res.fold(
@@ -91,8 +90,8 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       (r) {
         // Remove the task from the sorted list
        _tasks.removeWhere((task) => task.taskId == event.taskId);
-      print("inside bloc task id is ${event.taskId}");
-       print(_tasks);
+    
+       
         emit(TaskLoaded(_tasks));
       },
     );
@@ -101,7 +100,6 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     // Handle fetching tasks
   Future<void> _onFetchTask( LoadTasksEvent event, Emitter<TaskState> emit) async {
 
-    print("bloc loading task ${event.userId}");
     emit(TaskLoading());
     final res = await _getAllTasksUseCase.call(event.userId);
     res.fold(

@@ -37,16 +37,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<LoginUserEvent>((event, emit) async {
       emit(AuthLoading());
 
-      print("login success ${event.auth.userId}");
       final result = await loginUserUseCase.call(event.auth);
       result.fold(
         (failure) {
-          print("inside failure ${failure.message}");
           emit(AuthFailure("Login failed"));
         },
         (user) async {
-          print("on login sucess");
-          print(user.userId);
           emit(AuthSuccess("Login successful : ${user.userId}")); 
           emit(AuthLoaded(user));
         },

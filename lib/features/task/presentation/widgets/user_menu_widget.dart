@@ -22,7 +22,6 @@ class UserMenu extends StatelessWidget {
           _showSignOutConfirmation(context);
         } else if (value == 'profile') {
           Navigator.pushNamed(context, '/profile', arguments: userId);
-         
         } else if (value == 'settings') {
           Navigator.pushNamed(context, '/settings');
         } else if (value == 'help') {

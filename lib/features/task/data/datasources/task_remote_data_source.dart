@@ -53,7 +53,6 @@ class TaskRemoteDataSourceImplementation extends TaskRemoteDataSource {
      
     try {
       await userTaskRef.remove();
-      print("task with id $taskId of user $userId deleted succefully");
     } 
     catch (e) {
        print("Failed to delete task");

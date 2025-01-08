@@ -5,7 +5,7 @@ import 'package:taskapp/features/auth/presentation/bloc/auth_event.dart';
 import 'package:taskapp/features/auth/presentation/bloc/auth_state.dart';
 
 class AuthScreen extends StatelessWidget {
-  const AuthScreen({super.key});
+   const AuthScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
