@@ -23,30 +23,33 @@ final sl = GetIt.instance;
 Future<void> setupServiceLocator() async {
    
 
-
+   //shared preferance
   final sharedPreferences = await SharedPreferences.getInstance();
   sl.registerLazySingleton(() => sharedPreferences);
   
-   sl.registerLazySingleton<FirebaseDatabase>(() => FirebaseDatabase.instance);
+  //firebase
+  sl.registerLazySingleton<FirebaseDatabase>(() => FirebaseDatabase.instance);
 
-
-  // Data sources
+  
+  //sl() checks the GetIt registry to find an instance of SharedPreferences (or any other registered dependency) and passes it to the constructor.
+  // Data sources of Auth
   sl.registerLazySingleton<AuthLocalDataSource>(
       () => AuthLocalDataSourceImplementation(sl()));
   sl.registerLazySingleton<AuthRemoteDataSource>(
       () => AuthRemoteDataSourceImplementation(sl(),sl()));
-
-  // Repository
+  
+  //Other parts of your app only need to know about the interface (AuthRepository), not the concrete implementation (AuthRepositoryImpl).
+  // Repository of Auth
   sl.registerLazySingleton<AuthRepository>(
       () => AuthRepositoryImpl(sl(), sl()));
 
-  // Use cases
+  // Use cases of Auth
   sl.registerLazySingleton(() => CreateUserUseCase(sl()));
   sl.registerLazySingleton(() => LoginUserUseCase(sl()));
   sl.registerLazySingleton(() => LogOutUserUseCase(sl()));
   sl.registerLazySingleton(()=> GetUserIdUseCase(sl()));
    
-  //data source of task
+  //Data Source of Task
   sl.registerLazySingleton<TaskRemoteDataSource>(
       () => TaskRemoteDataSourceImplementation(sl()));
  
@@ -54,7 +57,7 @@ Future<void> setupServiceLocator() async {
       () => TaskRepositoryImplmentation(sl()));
 
 
-    // Use cases
+    // Use cases of Task
   sl.registerLazySingleton(() => AddTaskUseCase(sl()));
   sl.registerLazySingleton(() => UpdateTaskUseCase(sl()));
   sl.registerLazySingleton(() => DeleteTaskUseCase(sl()));
@@ -62,3 +65,21 @@ Future<void> setupServiceLocator() async {
    
 
 }
+
+// GetIt is a lightweight dependency injection (DI) package in Dart. It acts as a 
+// Service Locator, allowing you to register and retrieve dependencies 
+// (like services, repositories, or objects) globally in your application.
+  
+//    > flutter pub add get_it 
+   
+// final sl = GetIt.instance;  assign instance of get it to the sl
+
+// GetIt.instance provides the singleton(only one instance throught the app exist) instance of GetIt.
+
+// sl.registerLazySingleton(()=> sharedPreferances);
+// The instance is created only once, the first time it’s accessed.
+// The same instance is reused whenever it’s needed.
+
+// sl() checks the GetIt registry to find an instance of SharedPreferences (or any other registered dependency) and passes it to the constructor.
+
+// Other parts of your app only need to know about the interface (AuthRepository), not the concrete implementation (AuthRepositoryImpl).

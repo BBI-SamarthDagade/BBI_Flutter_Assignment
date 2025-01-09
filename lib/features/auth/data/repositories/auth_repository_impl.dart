@@ -17,7 +17,8 @@ class AuthRepositoryImpl extends AuthRepository {
       final AuthEntity user = await authRemoteDataSource.createUser();
       return Right(user); // Return the created user
     } catch (e) {
-      return Left(Failure( message: "Unable to Add User")); // Return failure in case of error
+      return Left(Failure(
+          message: "Unable to Add User")); // Return failure in case of error
     }
   }
 
@@ -30,31 +31,31 @@ class AuthRepositoryImpl extends AuthRepository {
       return Left(Failure(message: "unable to Login User"));
     }
   }
-  
+
+  //get user Id form local for login purpose
   @override
   Future<Either<Failure, AuthEntity>> getUserIdFromLocal() async {
-     try {
-        final userId = await authLocalDataSource.getUserId();
-        if(userId != null){
-          return Right(AuthEntity(userId: userId));
-        }else{
-          return Left(Failure(message: "unable to get UserId"));
-        }
-     } catch (e) {
-        return Left(Failure(message: "Error To get User ID from Local ${e.toString()}"));
-     }
-  }
-  
-  @override
-  Future<Either<Failure, void>> logoutUser(AuthEntity auth) async{
-    print("in logout repo impl ${auth.userId}");
-      try {
-        await authLocalDataSource.clearUserId();
-        return const Right(null);
-      } catch (e) {
-          return Left(Failure(message: "Error While Log Out User ${e.toString()}"));
+    try {
+      final userId = await authLocalDataSource.getUserId();
+      if (userId != null) {
+        return Right(AuthEntity(userId: userId));
+      } else {
+        return Left(Failure(message: "unable to get UserId"));
       }
+    } catch (e) {
+      return Left(
+          Failure(message: "Error To get User ID from Local ${e.toString()}"));
+    }
   }
 
-  
+  //clear user id from local so user will log out
+  @override
+  Future<Either<Failure, void>> logoutUser(AuthEntity auth) async {
+    try {
+      await authLocalDataSource.clearUserId();
+      return const Right(null);
+    } catch (e) {
+      return Left(Failure(message: "Error While Log Out User ${e.toString()}"));
+    }
+  }
 }

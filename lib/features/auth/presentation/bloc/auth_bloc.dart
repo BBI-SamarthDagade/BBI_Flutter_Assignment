@@ -12,23 +12,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final LogOutUserUseCase logOutUserUseCase;
   final GetUserIdUseCase getUserIdUseCase;
 
-  AuthBloc(this.createUserUseCase, this.loginUserUseCase, this.logOutUserUseCase, this.getUserIdUseCase)
+  AuthBloc(this.createUserUseCase, this.loginUserUseCase,
+      this.logOutUserUseCase, this.getUserIdUseCase)
       : super(AuthInitial()) {
-
     on<AddUserEvent>((event, emit) async {
       emit(AuthLoading());
-      
+
       final result = await createUserUseCase.call();
-      print(result);
+   
       result.fold(
         (failure) {
           emit(AuthFailure("Failed to add user"));
         },
         (user) async {
-          // final prefs = await SharedPreferences.getInstance();
-          // await prefs.setString('userId', user.userId);
           emit(AuthSuccess("User added successfully: ${user.userId}"));
-          
           emit(AuthLoaded(user));
         },
       );
@@ -43,7 +40,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           emit(AuthFailure("Login failed"));
         },
         (user) async {
-          emit(AuthSuccess("Login successful : ${user.userId}")); 
+          emit(AuthSuccess("Login successful : ${user.userId}"));
           emit(AuthLoaded(user));
         },
       );
@@ -54,9 +51,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthInitial());
     });
 
-
     on<GetUserIdFromLocalEvent>((event, emit) async {
-       emit(AuthLoading());
+      emit(AuthLoading());
       try {
         final userId = await getUserIdUseCase.call();
         if (userId != null) {
@@ -68,6 +64,5 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(AuthFailure("Error retrieving User ID: $e"));
       }
     });
-
   }
 }

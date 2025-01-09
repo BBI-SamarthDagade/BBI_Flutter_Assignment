@@ -12,3 +12,8 @@ class AddTaskUseCase {
         return taskRepositoryImpl.addTask(task, userId);
     }
 }
+//abstract Animal { sound(); } Dog imp animal { sound(asdfasdfsdf); }
+// Animal dog = Dog();
+// Animal anm;
+
+

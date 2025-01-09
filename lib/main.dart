@@ -24,7 +24,8 @@ void main() async {
   // Check if user is already logged in
   final prefs = await SharedPreferences.getInstance();
   final userId = prefs.getString('userId');
-  print("user id insiide main $userId");
+
+  print("user id inside main $userId");
 
   runApp(MyApp(userId: userId));
 }
@@ -63,7 +64,6 @@ class MyApp extends StatelessWidget {
             final task = arguments['task'] as TaskEntity?;
             return AddTaskScreen(userId,task: task);
           },
-
 
           '/auth': (context) => AuthScreen(),
           '/taskList': (context){ 

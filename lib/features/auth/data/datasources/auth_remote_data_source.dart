@@ -10,20 +10,18 @@ abstract class AuthRemoteDataSource {
 class AuthRemoteDataSourceImplementation extends AuthRemoteDataSource {
   final FirebaseDatabase _firebaseDatabase;
 
-
-  // final DatabaseReference _userCounterRef =
-  //     FirebaseDatabase.instance.ref('user_count'); 
-   final AuthLocalDataSource authLocalDataSource;
+  // final DatabaseReference _userCounterRef =   FirebaseDatabase.instance.ref('user_count');
+  final AuthLocalDataSource authLocalDataSource;
 
   // final DatabaseReference _usersRef = FirebaseDatabase.instance.ref('users');
-      AuthRemoteDataSourceImplementation(this.authLocalDataSource, this._firebaseDatabase);
+  AuthRemoteDataSourceImplementation(
+      this.authLocalDataSource, this._firebaseDatabase);
 
-   DatabaseReference get _userCounterRef => _firebaseDatabase.ref('user_count');
-   DatabaseReference get _usersRef => _firebaseDatabase.ref('users');
+  DatabaseReference get _userCounterRef => _firebaseDatabase.ref('user_count');
+  DatabaseReference get _usersRef => _firebaseDatabase.ref('users');
 
-
+  ///function to create new user account for app with unique user Id with form user_1
   @override
-
   Future<AuthEntity> createUser() async {
     try {
       final snapshot = await _userCounterRef.get();
@@ -31,20 +29,19 @@ class AuthRemoteDataSourceImplementation extends AuthRemoteDataSource {
           ? (snapshot.value as int)
           : 0;
 
-      final newUserId = 'user_${currentUserId + 1}';
-      await _userCounterRef.set(currentUserId + 1);
+      final newUserId =
+          'user_${currentUserId + 1}'; //creating new custom user Id
+      await _userCounterRef.set(currentUserId + 1); //incrementing counter value
 
-     print("new user Id is $newUserId");
+      print("new user Id is $newUserId");
 
       // Create a new user in the database
       await _usersRef.child(newUserId).set({
         'userId': newUserId,
       });
-      print("here");
-       
-       
+
       await authLocalDataSource.saveUserId(newUserId);
-      
+
       return AuthEntity(userId: newUserId);
     } catch (e) {
       print("Unable to create user: $e");
@@ -58,11 +55,10 @@ class AuthRemoteDataSourceImplementation extends AuthRemoteDataSource {
     try {
       // Retrieve the user data from the database
       final snapshot = await _usersRef.child(auth.userId).get();
-  
+
       if (snapshot.exists) {
         await authLocalDataSource.saveUserId(auth.userId);
         return auth;
-        
       } else {
         print("Error: User not registered");
 

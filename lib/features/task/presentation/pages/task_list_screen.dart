@@ -273,7 +273,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
   }
 
   String greeting() {
-    final hour = DateTime.now().hour;
+   final hour = DateTime.now().hour;
     if (hour < 12) return AppConstants.greetingMorning;
     if (hour < 18) return AppConstants.greetingAfternoon;
     return AppConstants.greetingEvening;
