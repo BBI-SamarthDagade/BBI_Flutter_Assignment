@@ -14,21 +14,19 @@ class AuthScreen extends StatelessWidget {
         title: const Text("Welcome to TaskApp"),
         automaticallyImplyLeading: false,
       ),
+
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthSuccess) {
-            // ScaffoldMessenger.of(context).showSnackBar(
-            //   SnackBar(content: Text(state.message)),
-
-            // );
-
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(state.message,style: TextStyle(color: Colors.black),), backgroundColor: Colors.green,),
+            );
           } else if (state is AuthFailure) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text("Error: ${state.error}")),
             );
           }
           else if (state is AuthLoaded) {
-
             Navigator.pushReplacementNamed(context, '/taskList',
             arguments: {
               "userId":state.auth.userId
@@ -39,14 +37,14 @@ class AuthScreen extends StatelessWidget {
         builder: (context, state) {
           if (state is AuthLoading) {
             return AnimatedContainer(
-              duration: Duration(milliseconds: 300),
+              duration: Duration(milliseconds: 500),
               curve: Curves.easeInOut,
               margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black26,
+                    color: const Color.fromARGB(255, 255, 255, 255),
                     blurRadius: 8,
                     offset: Offset(0, 4),
                   ),
@@ -55,12 +53,12 @@ class AuthScreen extends StatelessWidget {
               child: Center(
                 child: Text(
                   "Wait For While......",
-                  style: TextStyle(color: Colors.white, fontSize: 18),
+                  style: TextStyle(color: Colors.black, fontSize: 18),
                 ),
               ),
             );
           }
-
+        
           return Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -71,14 +69,12 @@ class AuthScreen extends StatelessWidget {
                   children: [
                     ElevatedButton(
                       onPressed: () {
-                        context.read<AuthBloc>().add(AddUserEvent());
-                         
+                        context.read<AuthBloc>().add(AddUserEvent()); 
                       },
                       child: const Text("Create User"),
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        
                         Navigator.pushReplacementNamed(context, '/login');
                       },
                       child: const Text("Login User"),

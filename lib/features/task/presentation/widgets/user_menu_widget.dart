@@ -11,20 +11,21 @@ class UserMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-     String lastDigit = extractLastDigit(userId);
+    String lastDigit = extractLastDigit(userId);
+
     return PopupMenuButton<String>(
       icon: CircleAvatar(
-         
         child: Text(lastDigit), // First letter of the username
       ),
       onSelected: (value) {
         if (value == 'sign_out') {
           _showSignOutConfirmation(context);
-        } else if (value == 'profile') {
-          Navigator.pushNamed(context, '/profile', arguments: userId);
-        } else if (value == 'settings') {
-          Navigator.pushNamed(context, '/settings');
-        } else if (value == 'help') {
+        } //else if (value == 'profile') {
+        //   Navigator.pushNamed(context, '/profile', arguments: userId);
+        // } else if (value == 'settings') {
+        //   Navigator.pushNamed(context, '/settings');
+        // }
+        else if (value == 'help') {
           Navigator.pushNamed(context, '/help');
           //Navigator.push(context, MaterialPageRoute(builder: (context) => HelpPage(),));
         }
@@ -104,10 +105,26 @@ class UserMenu extends StatelessWidget {
             ),
             TextButton(
               onPressed: () {
-                context.read<AuthBloc>().add(LogoutEvent(AuthEntity(userId: userId)));
+                context
+                    .read<AuthBloc>()
+                    .add(LogoutEvent(AuthEntity(userId: userId)));
                 Navigator.of(context).pop(); // Close the dialog
-                Navigator.pushReplacementNamed(context, '/auth'); // Navigate to the auth screen
+                Navigator.pushReplacementNamed(
+                    context, '/auth'); // Navigate to the auth screen
               },
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.red, // Button background color
+                foregroundColor: Colors.white, // Text color
+                padding: EdgeInsets.symmetric(
+                    horizontal: 20, vertical: 10), // Padding
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10), // Rounded corners
+                ),
+                textStyle: TextStyle(
+                  fontSize: 16, // Font size
+                  fontWeight: FontWeight.bold, // Font weight
+                ),
+              ),
               child: Text('Sign Out'),
             ),
           ],
@@ -117,10 +134,8 @@ class UserMenu extends StatelessWidget {
   }
 
   String extractLastDigit(String input) {
-  // Split the string by underscore and get the last part
-  List<String> parts = input.split('_');
-  return parts.last; // Return the last part, which is the digit
+    // Split the string by underscore and get the last part
+    List<String> parts = input.split('_');
+    return parts.last; // Return the last part, which is the digit
+  }
 }
-
-}
-

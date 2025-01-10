@@ -15,17 +15,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc(this.createUserUseCase, this.loginUserUseCase,
       this.logOutUserUseCase, this.getUserIdUseCase)
       : super(AuthInitial()) {
-    on<AddUserEvent>((event, emit) async {
+    on<AddUserEvent>((event, emit) async {  //to add user
       emit(AuthLoading());
 
       final result = await createUserUseCase.call();
    
       result.fold(
         (failure) {
-          emit(AuthFailure("Failed to add user"));
+          emit(AuthFailure("We couldn’t create your account this time. Let’s try that again."));
         },
         (user) async {
-          emit(AuthSuccess("User added successfully: ${user.userId}"));
+          emit(AuthSuccess("Account created successfully! Welcome aboard ${user.userId}!"));
           emit(AuthLoaded(user));
         },
       );
@@ -37,10 +37,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final result = await loginUserUseCase.call(event.auth);
       result.fold(
         (failure) {
-          emit(AuthFailure("Login failed"));
+          emit(AuthFailure("Oops! Login failed. Please check your credentials and try again."));
         },
         (user) async {
-          emit(AuthSuccess("Login successful : ${user.userId}"));
+          emit(AuthSuccess("Welcome back, ${user.userId}! We're glad to see you again."));
           emit(AuthLoaded(user));
         },
       );

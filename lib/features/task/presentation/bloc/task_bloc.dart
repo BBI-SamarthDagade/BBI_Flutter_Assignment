@@ -43,7 +43,6 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       return tasks;
     }
 
-
     Future<void> _onAddTask(AddTaskEvent event, Emitter<TaskState> emit) async{
       emit(TaskLoading());
 
@@ -63,6 +62,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
 
     Future<void> _onUpdateTask(UpdateTaskEvent event, Emitter<TaskState> emit) async{
+      emit(TaskLoading());  
       final res = await _updateTaskUseCase.call(event.task, event.userId);
 
       res.fold(

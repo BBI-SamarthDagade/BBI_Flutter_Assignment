@@ -149,7 +149,6 @@ import 'package:taskapp/features/task/presentation/bloc/task_state.dart';
 import 'package:taskapp/features/task/presentation/widgets/task_list_view.dart';
 import 'package:taskapp/features/task/presentation/widgets/user_menu_widget.dart';
 
-
 class TaskListScreen extends StatefulWidget {
   final String userId;
 
@@ -193,8 +192,11 @@ class _TaskListScreenState extends State<TaskListScreen> {
             color: AppConstants.appBarTitleColor,
           ),
         ),
+       
         automaticallyImplyLeading: false,
+        
         actions: [
+          
           IconButton(
             icon: Icon(
                 _sortByDueDate ? Icons.calendar_today : Icons.sort_by_alpha),
@@ -206,6 +208,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
               });
             },
           ),
+          
           IconButton(
             icon: Icon(
               _ascendingOrder ? Icons.arrow_upward : Icons.arrow_downward,
@@ -218,13 +221,23 @@ class _TaskListScreenState extends State<TaskListScreen> {
               });
             },
           ),
+
+          //to show popup menu
           UserMenu(userId: widget.userId),
         ],
       ),
       body: BlocBuilder<TaskBloc, TaskState>(
         builder: (context, state) {
           if (state is TaskLoading) {
-            return Center(child: CircularProgressIndicator());
+            return Center(
+                child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text("Loading Tasks...."),
+                SizedBox(height: 20),
+                CircularProgressIndicator(),
+              ],
+            ));
           } else if (state is TaskLoaded) {
             List<TaskEntity> tasks = state.tasks;
 
@@ -246,6 +259,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
             }
 
             return TaskListView(tasks: tasks, userId: widget.userId);
+
           } else if (state is TaskFailure) {
             return Center(child: Text(state.message));
           }
@@ -253,6 +267,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
         },
       ),
       floatingActionButton: FloatingActionButton(
+        tooltip: 'Add Task',
         onPressed: () {
           Navigator.pushNamed(
             context,
@@ -263,8 +278,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
             },
           ).then((_) {
             // Reload tasks after adding
-            BlocProvider.of<TaskBloc>(context)
-                .add(LoadTasksEvent(widget.userId));
+            BlocProvider.of<TaskBloc>(context).add(LoadTasksEvent(widget.userId));
           });
         },
         child: Icon(Icons.add),
@@ -273,7 +287,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
   }
 
   String greeting() {
-   final hour = DateTime.now().hour;
+    final hour = DateTime.now().hour;
     if (hour < 12) return AppConstants.greetingMorning;
     if (hour < 18) return AppConstants.greetingAfternoon;
     return AppConstants.greetingEvening;

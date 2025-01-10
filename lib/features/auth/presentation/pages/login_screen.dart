@@ -30,27 +30,42 @@ class _LoginScreenState extends State<LoginScreen> {
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthSuccess) {
-            // ScaffoldMessenger.of(context).showSnackBar(
-            //   SnackBar(content: Text("Successfully Logged In")),
-            // );
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  state.message,
+                  style: TextStyle(color: Colors.black),
+                ),
+                backgroundColor: Colors.green,
+              ),
+            );
           } else if (state is AuthFailure) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.error)),
+              SnackBar(
+                content: Text(
+                  state.error,
+                  style: TextStyle(color: Colors.white),
+                ),
+                backgroundColor: const Color.fromARGB(255, 220, 78, 68),
+              ),
             );
-          } 
-          else if (state is AuthLoaded) {
-     
-            
+          } else if (state is AuthLoaded) {
             Navigator.pushReplacementNamed(context, '/taskList',
-            arguments: {
-              "userId":state.auth.userId
-            }
-            );
+                arguments: {"userId": state.auth.userId});
           }
         },
         builder: (context, state) {
           if (state is AuthLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("Welcome back! Loading your account..."),
+                  SizedBox(height: 20),
+                  CircularProgressIndicator(),
+                ],
+              ),
+            );
           }
 
           return Padding(
@@ -60,12 +75,10 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 TextField(
                   controller: _userIdController,
-                  decoration:  InputDecoration(
-                    
+                  decoration: InputDecoration(
                     labelText: "Enter User ID",
-                    // icon: Icon(Icons.person, size: 40),
-                    // iconColor: Colors.lightBlue,
-                    prefixIcon: Icon(Icons.person, size: 30, color: Color.fromARGB(255, 72, 67, 99)),
+                    prefixIcon: Icon(Icons.person,
+                        size: 30, color: Color.fromARGB(255, 72, 67, 99)),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(45),
                     ),
@@ -80,7 +93,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       context.read<AuthBloc>().add(LoginUserEvent(auth));
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("Please enter a valid User ID")),
+                        SnackBar(
+                          content: Text(
+                            "Oops! User ID cannot be empty. Please enter a valid ID to proceed.",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          backgroundColor:
+                              const Color.fromARGB(255, 220, 78, 68),
+                        ),
                       );
                     }
                   },
