@@ -8,7 +8,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Home'),
+        title: Text('Products'),
         actions: [
           IconButton(
             icon: Icon(Icons.logout),
@@ -24,7 +24,7 @@ class HomeScreen extends StatelessWidget {
         ],
       ),
       body: Center(
-        child: Text('Welcome to the Home Screen!'),
+        child: Text('Welcome to the Product Home Screen!'),
       ),
     );
   }

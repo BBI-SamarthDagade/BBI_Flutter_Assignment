@@ -35,3 +35,8 @@ class AuthFailure extends AuthState {
 }
 
 class AuthSignedOut extends AuthState {}
+
+//newly added
+class Authenticated extends AuthState {}
+
+class Unauthenticated extends AuthState {}

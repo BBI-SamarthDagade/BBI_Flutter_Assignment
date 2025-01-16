@@ -63,5 +63,11 @@
         <string>google</string>
         <string>com.google</string>
     </array>
+	
+	<key>NSCameraUsageDescription</key>
+    <string>We need access to your camera for profile picture.</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>We need access to your photo library for profile picture.</string>
+
 </dict>
 </plist>

@@ -8,4 +8,5 @@ abstract class AuthRepository {
   Future<Either<Failure, User?>> signInWithEmail(AuthEntity authEntity);
   Future<Either<Failure, User?>> continueWithGoogle();
   Future<Either<Failure, void>> signOut();
+  Future<Either<Failure, String?>> getUserIdFromLocal();
 }

@@ -22,3 +22,7 @@ class SignUpWithEmailEvent extends AuthEvent{
    AuthEntity authEntity;
    SignUpWithEmailEvent(this.authEntity);
 }
+
+class CheckUserLoggedIn extends AuthEvent{
+
+}
