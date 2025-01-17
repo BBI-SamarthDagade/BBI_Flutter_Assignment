@@ -24,6 +24,6 @@ class AuthLocalDataSourceImplementation extends AuthLocalDataSource {
   @override
   Future<void> saveUserId(String userId) async {
     await sharedPreferancese.setString('userId', userId);
-    print("current user id is ${sharedPreferancese.get('userId')}");
+    //print("current user id is ${sharedPreferancese.get('userId')}");
   }
 }

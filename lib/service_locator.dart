@@ -18,6 +18,7 @@ import 'package:ecommerce/features/profile/domain/usecase/save_profile_use_case.
 import 'package:ecommerce/features/profile/domain/usecase/update_profile_use_case.dart';
 import 'package:ecommerce/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -53,6 +54,7 @@ Future<void> setUpServiceLocator() async {
 
   //profile remote data source
   serviceLocator.registerLazySingleton<FirebaseFirestore>(() => FirebaseFirestore.instance);  
+  serviceLocator.registerLazySingleton<FirebaseStorage>(() => FirebaseStorage.instance);
 
   serviceLocator.registerLazySingleton<ProfileRemoteDataSource>(
     () => ProfileRemoteDataSourceImpl(

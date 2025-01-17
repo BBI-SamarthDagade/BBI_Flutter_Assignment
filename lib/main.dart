@@ -60,8 +60,7 @@ import 'package:ecommerce/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:ecommerce/features/auth/presentation/bloc/auth_event.dart';
 import 'package:ecommerce/features/auth/presentation/bloc/auth_state.dart';
 import 'package:ecommerce/features/auth/presentation/pages/auth_screen.dart';
-import 'package:ecommerce/features/auth/presentation/pages/home_screen.dart';
-import 'package:ecommerce/features/auth/presentation/pages/profile_setup_screen.dart';
+import 'package:ecommerce/features/product/presentation/product_screen.dart';
 import 'package:ecommerce/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:ecommerce/features/profile/presentation/pages/profile_screen.dart';
 import 'package:ecommerce/firebase_options.dart';
@@ -107,17 +106,21 @@ class MyApp extends StatelessWidget {
         home: BlocBuilder<AuthBloc, AuthState>(
           builder: (context, state) {
             if (state is Authenticated) {
-              return HomeScreen();
-            }
+              print(state);
+              return ProductScreen();   //to fix changes home screen
+            }  
+           print("bro here this is printing");
             return AuthScreen();
+           
           },
         ),
         routes: {
-          '/profileSetup': (context) => ProfileSetupScreen(),
+          '/profileSetup': (context) => ProfileScreen(),
           '/auth': (context) => AuthScreen(),
-          '/home': (context) => HomeScreen(),
+          '/home': (context) => ProductScreen(),  //change to home screen for privious code
         },
       ),
     );
   }
 }
+ 

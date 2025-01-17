@@ -18,7 +18,7 @@
 //     required this.signOutUseCase,
 //     required this.signUpWithEmailUseCase,
 //   }) : super(AuthInitial()) {
-    
+
 //     // Register each event handler separately
 //     on<ContinueWithGoogleEvent>((event, emit) async {
 //       emit(AuthLoading());
@@ -56,10 +56,10 @@
 //       );
 //     });
 
-    
 //   }
 // }
 
+import 'package:ecommerce/core/error/failures.dart';
 import 'package:ecommerce/features/auth/domain/usecases/continue_with_google_use_case.dart';
 import 'package:ecommerce/features/auth/domain/usecases/get_user_id_from_local.dart';
 import 'package:ecommerce/features/auth/domain/usecases/sign_in_with_email_use_case.dart';
@@ -81,9 +81,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required this.signInWithEmailUseCase,
     required this.signOutUseCase,
     required this.signUpWithEmailUseCase,
-   required this.getUserIdFromLocal,
+    required this.getUserIdFromLocal,
   }) : super(AuthInitial()) {
-    
     // Register each event handler separately
     on<ContinueWithGoogleEvent>((event, emit) async {
       emit(AuthLoading());
@@ -99,11 +98,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final result = await signInWithEmailUseCase.call(event.authEntity);
       result.fold(
         (failure) => emit(AuthFailure("Failed to Sign In with Email")),
-
-        (user){ 
-          print("inside success");
-          //emit(Authenticated());
+        (user) {
           emit(AuthSuccess(user));
+          emit(Authenticated());
         },
       );
     });
@@ -111,30 +108,32 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<SignOutEvent>((event, emit) async {
       emit(AuthLoading());
       final result = await signOutUseCase.call();
-      result.fold(
-        (failure) => emit(AuthFailure("Failed to Sign out")),
-        (_) => emit(AuthSignedOut()),
-      );
+      result.fold((failure) => emit(AuthFailure("Failed to Sign out")), (_) {
+        emit(AuthSignedOut());
+        emit(Unauthenticated());
+      });
     });
 
     on<SignUpWithEmailEvent>((event, emit) async {
       emit(AuthLoading());
       final result = await signUpWithEmailUseCase.call(event.authEntity);
-      result.fold(
-        (failure) => emit(AuthFailure("Failed to Sign Up With Email")),
-        (user) => emit(AuthSuccess(user)),
-      );
+      result
+          .fold((failure) => emit(AuthFailure("Failed to Sign Up With Email")),
+              (user) {
+        emit(AuthSuccess(user));
+      });
     });
 
-   on<CheckUserLoggedIn>((event, emit) async {
-      final userId = await await getUserIdFromLocal.call();
-      if (userId != null) {
-        emit(Authenticated());
-      } else {
-        emit(Unauthenticated());
-      }
-   });
-    
+    on<CheckUserLoggedIn>((event, emit) async {
+      final result = await getUserIdFromLocal.call();
+      result.fold((l) => Failure(message: "failed to fetch user id from local"),
+          (userId) {
+        if (userId != null) {
+          emit(Authenticated());
+        } else {
+          emit(Unauthenticated());
+        }
+      });
+    });
   }
 }
- 
