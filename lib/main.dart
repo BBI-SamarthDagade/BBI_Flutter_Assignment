@@ -53,6 +53,7 @@
 
 import 'package:ecommerce/features/auth/domain/usecases/continue_with_google_use_case.dart';
 import 'package:ecommerce/features/auth/domain/usecases/get_user_id_from_local.dart';
+import 'package:ecommerce/features/auth/domain/usecases/password_reset_use_case.dart';
 import 'package:ecommerce/features/auth/domain/usecases/sign_in_with_email_use_case.dart';
 import 'package:ecommerce/features/auth/domain/usecases/sign_out_use_case.dart';
 import 'package:ecommerce/features/auth/domain/usecases/sign_up_with_email_use_case.dart';
@@ -88,7 +89,8 @@ class MyApp extends StatelessWidget {
             signInWithEmailUseCase: SignInWithEmailUseCase(serviceLocator()),
             signOutUseCase: SignOutUseCase(serviceLocator()),
             signUpWithEmailUseCase: SignUpWithEmailUseCase(serviceLocator()),
-            getUserIdFromLocal: GetUserIdFromLocal(serviceLocator()),
+            getUserIdFromLocal: GetUserIdFromLocal(serviceLocator()), 
+            passwordResetUseCase: PasswordResetUseCase(serviceLocator()),
           )..add(CheckUserLoggedIn()),
         ),
         BlocProvider(   //bloc provider of Profile Feature

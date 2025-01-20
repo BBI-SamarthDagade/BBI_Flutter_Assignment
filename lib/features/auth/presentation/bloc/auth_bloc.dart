@@ -62,6 +62,7 @@
 import 'package:ecommerce/core/error/failures.dart';
 import 'package:ecommerce/features/auth/domain/usecases/continue_with_google_use_case.dart';
 import 'package:ecommerce/features/auth/domain/usecases/get_user_id_from_local.dart';
+import 'package:ecommerce/features/auth/domain/usecases/password_reset_use_case.dart';
 import 'package:ecommerce/features/auth/domain/usecases/sign_in_with_email_use_case.dart';
 import 'package:ecommerce/features/auth/domain/usecases/sign_out_use_case.dart';
 import 'package:ecommerce/features/auth/domain/usecases/sign_up_with_email_use_case.dart';
@@ -75,6 +76,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final SignOutUseCase signOutUseCase;
   final SignUpWithEmailUseCase signUpWithEmailUseCase;
   final GetUserIdFromLocal getUserIdFromLocal;
+  final PasswordResetUseCase passwordResetUseCase;
 
   AuthBloc({
     required this.continueWithGoogleUseCase,
@@ -82,6 +84,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required this.signOutUseCase,
     required this.signUpWithEmailUseCase,
     required this.getUserIdFromLocal,
+    required this.passwordResetUseCase,
   }) : super(AuthInitial()) {
     // Register each event handler separately
     on<ContinueWithGoogleEvent>((event, emit) async {
@@ -89,7 +92,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final result = await continueWithGoogleUseCase.call();
       result.fold(
         (failure) => emit(AuthFailure("Failed to continue With Google")),
-        (user) => emit(AuthSuccess(user)),
+        (user){
+          emit(AuthSuccess(user));
+
+        }
+        
       );
     });
 
@@ -133,6 +140,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         } else {
           emit(Unauthenticated());
         }
+      });
+    });
+
+    on<PasswrodResetEvent>((event, emit) async {
+      final result = await passwordResetUseCase.call(event.email);
+      result.fold((l) => Failure(message: "Failed to Reset and Password using Email"),
+      (_) {
+         emit(AuthInitial());
       });
     });
   }

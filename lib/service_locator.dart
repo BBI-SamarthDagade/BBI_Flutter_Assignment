@@ -6,6 +6,7 @@ import 'package:ecommerce/features/auth/data/datasources/auth_remote_data_source
 import 'package:ecommerce/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:ecommerce/features/auth/domain/repositories/auth_repository.dart';
 import 'package:ecommerce/features/auth/domain/usecases/continue_with_google_use_case.dart';
+import 'package:ecommerce/features/auth/domain/usecases/password_reset_use_case.dart';
 import 'package:ecommerce/features/auth/domain/usecases/sign_in_with_email_use_case.dart';
 import 'package:ecommerce/features/auth/domain/usecases/sign_out_use_case.dart';
 import 'package:ecommerce/features/auth/domain/usecases/sign_up_with_email_use_case.dart';
@@ -48,6 +49,7 @@ Future<void> setUpServiceLocator() async {
   serviceLocator.registerLazySingleton(() => SignUpWithEmailUseCase(serviceLocator()));
   serviceLocator.registerLazySingleton(() => ContinueWithGoogleUseCase(serviceLocator()));
   serviceLocator.registerLazySingleton(() => SignOutUseCase(serviceLocator()));
+  serviceLocator.registerLazySingleton(() => PasswordResetUseCase(serviceLocator()));
 
 
   //Profile Feature

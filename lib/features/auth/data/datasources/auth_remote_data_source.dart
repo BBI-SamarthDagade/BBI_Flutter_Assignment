@@ -7,6 +7,7 @@ abstract class AuthRemoteDataSource {
   Future<User?> continueWithGoogle();
   Future<User?> signInWithEmail(AuthEntity authEntity);
   Future<void> signOut();
+  Future<void> sendPasswordResetEmail(String email);
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -37,64 +38,16 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   @override
   Future<User?> continueWithGoogle() async {
-    // try {
-    //   // Attempt to sign in the user using Google Sign-In
-    //   final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-
-    //   // If the user cancels the Google sign-in process, return null.
-    //   if (googleUser == null) {
-    //     return null;
-    //   }
-
-    //   //retrive the authentication details (access token and ID token ) from signed-in Google User.
-    //   final GoogleSignInAuthentication googleAuth =
-    //       await googleUser.authentication;
-
-    //   // Create Firebase credentials using the Google authentication tokens.
-    //   final AuthCredential credential = GoogleAuthProvider.credential(
-    //     accessToken:
-    //         googleAuth.accessToken, // Access token for the Google user.
-    //     idToken: googleAuth.idToken, // ID token for the Google user.
-    //   );
-
-    //   // Use the generated credentials to sign in with Firebase Authentication.
-    //   UserCredential userCredential =
-    //       await _firebaseAuth.signInWithCredential(credential);
-
-    //   await _authLocalDataSource.saveUserId(userCredential.user!.uid);
-
-    //   return userCredential.user;
-    // } catch (e) {
-    //   throw e;
-    // }
-
     var user = await _firebaseAuth.signInWithProvider(_googleAuthProvider);
 
     return _firebaseAuth.currentUser;
-
-    // try {
-    //   var user = await _firebaseAuth.signInWithProvider(_googleAuthProvider);
-
-    //   if (user == null) {
-    //     return Left(Failure('Google sign-in aborted'));
-    //   }
-
-    //   if (user != null) {
-    //     await _authLocalDataSource.saveUserId(_firebaseAuth.currentUser!.uid);
-    //   }
-
-    //   return Right(_firebaseAuth.currentUser!);
-
-    // } catch (e) {
-    //   return Left(Failure(e.toString()));
-    // }
   }
 
   @override
   Future<void> signOut() async {
     try {
       await _firebaseAuth.signOut();
-      // await _googleSignIn.signOut();
+      //await _googleSignIn.signOut();
       await _authLocalDataSource.clearUserId();
     } catch (e) {
       throw e;
@@ -112,5 +65,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     } catch (e) {
       throw e;
     }
+  }
+  
+  @override
+  Future<void> sendPasswordResetEmail(String email) async {
+    await _firebaseAuth.sendPasswordResetEmail(email: email);
   }
 }

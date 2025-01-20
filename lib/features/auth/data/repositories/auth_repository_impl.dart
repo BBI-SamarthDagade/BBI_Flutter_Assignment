@@ -122,6 +122,16 @@ class AuthRepositoryImpl implements AuthRepository {
       return Left(Failure(message: "Failed to sign up with Email : ${e.toString()}"));
     }
   }
+  
+  @override
+  Future<Either<Failure, void>> sendPasswordResetEmail(String email) async{
+     try {
+       await authRemoteDataSource.sendPasswordResetEmail(email);
+       return Right(null);
+     } catch (e) {
+       return Left(Failure(message: "Failed to Send password Reset Email : ${e.toString()}"));
+     }
+  }
  
  
  

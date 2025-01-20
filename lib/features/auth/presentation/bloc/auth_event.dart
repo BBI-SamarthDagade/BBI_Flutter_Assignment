@@ -26,3 +26,8 @@ class SignUpWithEmailEvent extends AuthEvent{
 class CheckUserLoggedIn extends AuthEvent{
 
 }
+
+class PasswrodResetEvent extends AuthEvent{
+  String email;
+  PasswrodResetEvent(this.email);
+}

@@ -24,9 +24,10 @@ class _ProductScreenState extends State<ProductScreen> {
   int _currentIndex = 0; // Tracks the selected tab
 
   final List<Widget> _screens = [
+    
     HomePage(),
-    CartScreen(),
     WishlistScreen(),
+    CartScreen(),
     UserProfileScreen(),
   ];
 
@@ -67,14 +68,14 @@ class _ProductScreenState extends State<ProductScreen> {
                 label: 'Home',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.shopping_cart_outlined, size: 28),
-                activeIcon: Icon(Icons.shopping_cart, size: 30, color: Colors.blue),
-                label: 'Cart',
-              ),
-              BottomNavigationBarItem(
                 icon: Icon(Icons.favorite_border, size: 28),
                 activeIcon: Icon(Icons.favorite, size: 30, color: Colors.blue),
                 label: 'Wishlist',
+              ),
+               BottomNavigationBarItem(
+                icon: Icon(Icons.shopping_cart_outlined, size: 28),
+                activeIcon: Icon(Icons.shopping_cart, size: 30, color: Colors.blue),
+                label: 'Cart',
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.person_outline, size: 28),

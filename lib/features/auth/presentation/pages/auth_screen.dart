@@ -211,7 +211,6 @@
 //   }
 // }
 
-
 // import 'package:flutter/material.dart';
 // import 'package:flutter_bloc/flutter_bloc.dart';
 // import 'package:ecommerce/features/auth/presentation/bloc/auth_bloc.dart';
@@ -278,14 +277,14 @@
 //             );
 //           } else if (state is AuthSuccess) {
 //             Navigator.pop(context); // Close loading dialog
-//             if (_isSignUp) { 
+//             if (_isSignUp) {
 //               // Navigate to profile setup only after successful sign-up
 //               Navigator.pushReplacementNamed(context, '/profileSetup');
-//             } 
-//             else {
-//                Navigator.pushReplacementNamed(context, '/home'); 
 //             }
-//           } 
+//             else {
+//                Navigator.pushReplacementNamed(context, '/home');
+//             }
+//           }
 //           else if (state is AuthFailure) {
 //             Navigator.pop(context); // Close loading dialog
 //             ScaffoldMessenger.of(context).showSnackBar(
@@ -435,7 +434,7 @@
 //                             style: TextStyle(color: Colors.black),
 //                           ),
 //                         ),
-                         
+
 //                          SizedBox(height: 10),
 //                          Divider(color: Colors.grey.shade400, thickness: 1),
 //                          SizedBox(height: 10),
@@ -465,6 +464,242 @@
 //   }
 // }
 
+//before profile setup
+// import 'package:flutter/material.dart';
+// import 'package:flutter_bloc/flutter_bloc.dart';
+// import 'package:ecommerce/features/auth/presentation/bloc/auth_bloc.dart';
+// import 'package:ecommerce/features/auth/presentation/bloc/auth_event.dart';
+// import 'package:ecommerce/features/auth/presentation/bloc/auth_state.dart';
+// import 'package:ecommerce/features/auth/domain/entities/auth_entity.dart';
+// import 'package:sign_in_button/sign_in_button.dart';
+
+// class AuthScreen extends StatefulWidget {
+//   @override
+//   _AuthScreenState createState() => _AuthScreenState();
+// }
+
+// class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateMixin {
+//   final TextEditingController _emailController = TextEditingController();
+//   final TextEditingController _passwordController = TextEditingController();
+//   final TextEditingController _confirmPasswordController = TextEditingController();
+//   final _formKey = GlobalKey<FormState>();
+//   bool _isSignUp = false;
+//   bool _isPasswordVisible = false;
+//   bool _isConfirmPasswordVisible = false;
+
+//   void _toggleSignUp() {
+//     setState(() {
+//       _isSignUp = !_isSignUp;
+//     });
+//   }
+
+//   void _handleSubmit(BuildContext context) {
+//     if (_formKey.currentState?.validate() ?? false) {
+//       final authEntity = AuthEntity(
+//         email: _emailController.text.trim(),
+//         password: _passwordController.text.trim(),
+//       );
+
+//       if (_isSignUp) {
+//         BlocProvider.of<AuthBloc>(context).add(SignUpWithEmailEvent(authEntity));
+//       } else {
+//         BlocProvider.of<AuthBloc>(context).add(SignInWithEmailEvent(authEntity));
+//       }
+//     }
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     final theme = Theme.of(context);
+
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text(
+//           _isSignUp ? 'Create an Account' : 'Welcome Back',
+//           style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+//         ),
+//         centerTitle: true,
+//         backgroundColor: Colors.transparent,
+//         elevation: 0,
+//       ),
+//       body: BlocListener<AuthBloc, AuthState>(
+//         listener: (context, state) {
+//           if (state is AuthLoading) {
+//             print("showing builder");
+//             showDialog(
+//               context: context,
+//               barrierDismissible: false,
+//               builder: (_) => Center(child: CircularProgressIndicator()),
+//             );
+//           } else if (state is AuthSuccess) {
+//             Navigator.pop(context);
+//             if (_isSignUp) {
+//               Navigator.pushReplacementNamed(context, '/profileSetup');
+//             } else {
+//               Navigator.pushReplacementNamed(context, '/home');
+//             }
+//           } else if (state is AuthFailure) {
+//             Navigator.pop(context);
+//             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
+//           }
+//         },
+//         child: SingleChildScrollView(
+//           padding: EdgeInsets.all(16.0),
+//           child: Column(
+//             crossAxisAlignment: CrossAxisAlignment.stretch,
+//             children: [
+//               // Branding Header
+//               Text(
+//                 _isSignUp ? "Join Our Community!" : "Let's Sign You In!",
+//                 style: theme.textTheme.headlineMedium?.copyWith(
+//                   fontWeight: FontWeight.bold,
+//                   color: theme.colorScheme.primary,
+//                 ),
+//                 textAlign: TextAlign.center,
+//               ),
+//               SizedBox(height: 30),
+
+//               // Form Card
+//               Card(
+//                 elevation: 10.0,
+//                 shadowColor: Colors.black.withOpacity(0.5),
+//                 shape: RoundedRectangleBorder(
+//                   borderRadius: BorderRadius.circular(20.0),
+//                 ),
+//                 child: Padding(
+//                   padding: EdgeInsets.all(20.0),
+//                   child: Form(
+//                     key: _formKey,
+//                     child: Column(
+//                       children: [
+//                         TextFormField(
+//                           controller: _emailController,
+//                           decoration: InputDecoration(
+//                             labelText: 'Email',
+//                             prefixIcon: Icon(Icons.email_outlined),
+//                             border: OutlineInputBorder(
+//                               borderRadius: BorderRadius.circular(15.0),
+//                               borderSide: BorderSide.none,
+//                             ),
+//                               filled: true,
+//   fillColor: const Color(0xFFF3F4F6), // A soft, neutral gray
+//                           ),
+//                           keyboardType: TextInputType.emailAddress,
+//                           validator: (value) => value == null || !value.contains('@') ? 'Enter a valid email' : null,
+//                         ),
+//                         SizedBox(height: 15.0),
+//                         TextFormField(
+//                           controller: _passwordController,
+//                           obscureText: !_isPasswordVisible,
+//                           decoration: InputDecoration(
+//                             labelText: 'Password',
+//                             prefixIcon: Icon(Icons.lock_outline),
+//                             suffixIcon: IconButton(
+//                               icon: Icon(
+//                                 _isPasswordVisible ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+//                               ),
+//                               onPressed: () => setState(() => _isPasswordVisible = !_isPasswordVisible),
+//                             ),
+//                             border: OutlineInputBorder(
+//                               borderRadius: BorderRadius.circular(15.0),
+//                               borderSide: BorderSide.none,
+//                             ),
+//                             filled: true,
+//                             fillColor: Colors.grey.shade100,
+//                           ),
+//                           validator: (value) => value == null || value.length < 6 ? 'Password must be at least 6 characters' : null,
+//                         ),
+//                         if (_isSignUp) ...[
+//                           SizedBox(height: 15.0),
+//                           TextFormField(
+//                             controller: _confirmPasswordController,
+//                             obscureText: !_isConfirmPasswordVisible,
+//                             decoration: InputDecoration(
+//                               labelText: 'Confirm Password',
+//                               prefixIcon: Icon(Icons.lock_outline),
+//                               suffixIcon: IconButton(
+//                                 icon: Icon(
+//                                   _isConfirmPasswordVisible ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+//                                 ),
+//                                 onPressed: () => setState(() => _isConfirmPasswordVisible = !_isConfirmPasswordVisible),
+//                               ),
+//                               border: OutlineInputBorder(
+//                                 borderRadius: BorderRadius.circular(15.0),
+//                                 borderSide: BorderSide.none,
+//                               ),
+//                               filled: true,
+//                               fillColor: Colors.grey.shade100,
+//                             ),
+//                             validator: (value) => value != _passwordController.text ? 'Passwords do not match' : null,
+//                           ),
+//                         ],
+//                       ],
+//                     ),
+//                   ),
+//                 ),
+//               ),
+//               SizedBox(height: 20.0),
+
+//               // Action Buttons
+//               ElevatedButton(
+//                 onPressed: () => _handleSubmit(context),
+//                 style: ElevatedButton.styleFrom(
+//                   shape: RoundedRectangleBorder(
+//                     borderRadius: BorderRadius.circular(15.0),
+//                   ),
+//                   padding: EdgeInsets.symmetric(vertical: 16.0),
+//                 ),
+//                 child: Text(
+//                   _isSignUp ? 'Sign Up' : 'Sign In',
+//                   style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+//                 ),
+//               ),
+//               SizedBox(height: 15.0),
+
+//               // Switch Mode Text
+//               TextButton(
+//                 onPressed: _toggleSignUp,
+//                 child: Text(
+//                   _isSignUp ? 'Already have an account? Sign In' : 'Don’t have an account? Sign Up',
+//                   style: TextStyle(color: Colors.black87, fontSize: 16.0),
+//                 ),
+//               ),
+
+//               SizedBox(height: 20.0),
+
+//               // Divider with "OR"
+//               Row(
+//                 children: [
+//                   Expanded(child: Divider(color: Colors.grey.shade300)),
+//                   Padding(
+//                     padding: EdgeInsets.symmetric(horizontal: 8.0),
+//                     child: Text('OR', style: TextStyle(color: Colors.grey.shade600)),
+//                   ),
+//                   Expanded(child: Divider(color: Colors.grey.shade300)),
+//                 ],
+//               ),
+//               SizedBox(height: 20.0),
+
+//               // Social Login
+//               SignInButton(
+//                 Buttons.google,
+//                 onPressed: () {
+//                   BlocProvider.of<AuthBloc>(context).add(ContinueWithGoogleEvent());
+//                //   Navigator.pushReplacementNamed(context, '/profileSetup');
+//                 },
+//                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+//                 text: "Continue with Google",
+//               ),
+//             ],
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ecommerce/features/auth/presentation/bloc/auth_bloc.dart';
@@ -478,10 +713,13 @@ class AuthScreen extends StatefulWidget {
   _AuthScreenState createState() => _AuthScreenState();
 }
 
-class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateMixin {
+class _AuthScreenState extends State<AuthScreen>
+    with SingleTickerProviderStateMixin {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
+
   final _formKey = GlobalKey<FormState>();
   bool _isSignUp = false;
   bool _isPasswordVisible = false;
@@ -501,9 +739,11 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
       );
 
       if (_isSignUp) {
-        BlocProvider.of<AuthBloc>(context).add(SignUpWithEmailEvent(authEntity));
+        BlocProvider.of<AuthBloc>(context)
+            .add(SignUpWithEmailEvent(authEntity));
       } else {
-        BlocProvider.of<AuthBloc>(context).add(SignInWithEmailEvent(authEntity));
+        BlocProvider.of<AuthBloc>(context)
+            .add(SignInWithEmailEvent(authEntity));
       }
     }
   }
@@ -516,181 +756,239 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
       appBar: AppBar(
         title: Text(
           _isSignUp ? 'Create an Account' : 'Welcome Back',
-          style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+          style: theme.textTheme.headlineSmall
+              ?.copyWith(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
+        automaticallyImplyLeading: false,
       ),
-      body: BlocListener<AuthBloc, AuthState>(
+      body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
-          if (state is AuthLoading) {
-            showDialog(
-              context: context,
-              barrierDismissible: false,
-              builder: (_) => Center(child: CircularProgressIndicator()),
-            );
-          } else if (state is AuthSuccess) {
-            Navigator.pop(context);
+          if (state is AuthSuccess) {
             if (_isSignUp) {
               Navigator.pushReplacementNamed(context, '/profileSetup');
             } else {
               Navigator.pushReplacementNamed(context, '/home');
             }
           } else if (state is AuthFailure) {
-            Navigator.pop(context);
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.message)),
+            );
           }
         },
-        child: SingleChildScrollView(
-          padding: EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+        builder: (context, state) {
+          return Stack(
             children: [
-              // Branding Header
-              Text(
-                _isSignUp ? "Join Our Community!" : "Let's Sign You In!",
-                style: theme.textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: theme.colorScheme.primary,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: 30),
-
-              // Form Card
-              Card(
-                elevation: 10.0,
-                shadowColor: Colors.black.withOpacity(0.5),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-                child: Padding(
-                  padding: EdgeInsets.all(20.0),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      children: [
-                        TextFormField(
-                          controller: _emailController,
-                          decoration: InputDecoration(
-                            labelText: 'Email',
-                            prefixIcon: Icon(Icons.email_outlined),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(15.0),
-                              borderSide: BorderSide.none,
-                            ),
-                              filled: true,
-  fillColor: const Color(0xFFF3F4F6), // A soft, neutral gray
-                          ),
-                          keyboardType: TextInputType.emailAddress,
-                          validator: (value) => value == null || !value.contains('@') ? 'Enter a valid email' : null,
-                        ),
-                        SizedBox(height: 15.0),
-                        TextFormField(
-                          controller: _passwordController,
-                          obscureText: !_isPasswordVisible,
-                          decoration: InputDecoration(
-                            labelText: 'Password',
-                            prefixIcon: Icon(Icons.lock_outline),
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                _isPasswordVisible ? Icons.visibility_outlined : Icons.visibility_off_outlined,
-                              ),
-                              onPressed: () => setState(() => _isPasswordVisible = !_isPasswordVisible),
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(15.0),
-                              borderSide: BorderSide.none,
-                            ),
-                            filled: true,
-                            fillColor: Colors.grey.shade100,
-                          ),
-                          validator: (value) => value == null || value.length < 6 ? 'Password must be at least 6 characters' : null,
-                        ),
-                        if (_isSignUp) ...[
-                          SizedBox(height: 15.0),
-                          TextFormField(
-                            controller: _confirmPasswordController,
-                            obscureText: !_isConfirmPasswordVisible,
-                            decoration: InputDecoration(
-                              labelText: 'Confirm Password',
-                              prefixIcon: Icon(Icons.lock_outline),
-                              suffixIcon: IconButton(
-                                icon: Icon(
-                                  _isConfirmPasswordVisible ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+              SingleChildScrollView(
+                padding: EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      _isSignUp ? "Join Our Community!" : "Let's Sign You In!",
+                      style: theme.textTheme.headlineMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.primary,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 30),
+                    Card(
+                      elevation: 12.0,
+                      shadowColor: Colors.black.withOpacity(0.8),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.0),
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.all(20.0),
+                        child: Form(
+                          key: _formKey,
+                          child: Column(
+                            children: [
+                              TextFormField(
+                                controller: _emailController,
+                                decoration: InputDecoration(
+                                  labelText: 'Email',
+                                  prefixIcon: Icon(Icons.email_outlined),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(15.0),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  filled: true,
+                                  fillColor: const Color(0xFFF3F4F6),
                                 ),
-                                onPressed: () => setState(() => _isConfirmPasswordVisible = !_isConfirmPasswordVisible),
+                                keyboardType: TextInputType.emailAddress,
+                                validator: (value) {
+                                  // Define a regex pattern for valid email addresses
+                                  final emailRegex = RegExp(
+                                      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+                                  if (value == null || value.isEmpty) {
+                                    return 'Email is required';
+                                  } else if (!emailRegex.hasMatch(value)) {
+                                    return 'Enter a valid email address';
+                                  }
+                                  return null;
+                                },
                               ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15.0),
-                                borderSide: BorderSide.none,
+                              SizedBox(height: 15.0),
+                              TextFormField(
+                                controller: _passwordController,
+                                obscureText: !_isPasswordVisible,
+                                decoration: InputDecoration(
+                                  labelText: 'Password',
+                                  prefixIcon: Icon(Icons.lock_outline),
+                                  suffixIcon: IconButton(
+                                    icon: Icon(
+                                      _isPasswordVisible
+                                          ? Icons.visibility_outlined
+                                          : Icons.visibility_off_outlined,
+                                    ),
+                                    onPressed: () => setState(() =>
+                                        _isPasswordVisible =
+                                            !_isPasswordVisible),
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(15.0),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  filled: true,
+                                  fillColor: Colors.grey.shade100,
+                                ),
+                                validator: (value) => value == null ||
+                                        value.length < 6
+                                    ? 'Password must be at least 6 characters'
+                                    : null,
                               ),
-                              filled: true,
-                              fillColor: Colors.grey.shade100,
-                            ),
-                            validator: (value) => value != _passwordController.text ? 'Passwords do not match' : null,
+                              if (_isSignUp) ...[
+                                SizedBox(height: 15.0),
+                                TextFormField(
+                                  controller: _confirmPasswordController,
+                                  obscureText: !_isConfirmPasswordVisible,
+                                  decoration: InputDecoration(
+                                    labelText: 'Confirm Password',
+                                    prefixIcon: Icon(Icons.lock_outline),
+                                    suffixIcon: IconButton(
+                                      icon: Icon(
+                                        _isConfirmPasswordVisible
+                                            ? Icons.visibility_outlined
+                                            : Icons.visibility_off_outlined,
+                                      ),
+                                      onPressed: () => setState(() =>
+                                          _isConfirmPasswordVisible =
+                                              !_isConfirmPasswordVisible),
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15.0),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    filled: true,
+                                    fillColor: Colors.grey.shade100,
+                                  ),
+                                  validator: (value) =>
+                                      value != _passwordController.text
+                                          ? 'Passwords do not match'
+                                          : null,
+                                ),
+                              ],
+                            ],
                           ),
-                        ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 20.0),
+                    ElevatedButton(
+                      onPressed: () => _handleSubmit(context),
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
+                        padding: EdgeInsets.symmetric(vertical: 16.0),
+                      ),
+                      child: Text(
+                        _isSignUp ? 'Sign Up' : 'Sign In',
+                        style: TextStyle(
+                            fontSize: 18.0, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    _isSignUp == false
+                        ?   TextButton(
+                      onPressed: () {
+                         final email = _emailController.text.trim();
+
+                        if (email.isNotEmpty) {
+                          BlocProvider.of<AuthBloc>(context)
+                              .add(PasswrodResetEvent(email));
+
+                           ScaffoldMessenger.of(context).showSnackBar(
+                           SnackBar(
+                                content: Text("Password reset email sent!")),
+                          );
+                        } else {
+                           ScaffoldMessenger.of(context).showSnackBar(
+                             SnackBar(
+                               content:
+                                   Text("Please enter a valid email address")),
+                           );
+                        }
+                      },
+                     child: Text("Reset Password"),
+                    )
+                        : SizedBox.shrink(),
+                    SizedBox(height: 15.0),
+                    TextButton(
+                      onPressed: _toggleSignUp,
+                      child: Text(
+                        _isSignUp
+                            ? 'Already have an account? Sign In'
+                            : 'Don’t have an account? Sign Up',
+                        style: TextStyle(color: Colors.black87, fontSize: 16.0),
+                      ),
+                    ),
+                    SizedBox(height: 20.0),
+                    Row(
+                      children: [
+                        Expanded(child: Divider(color: Colors.grey.shade300)),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Text('OR',
+                              style: TextStyle(color: Colors.grey.shade600)),
+                        ),
+                        Expanded(child: Divider(color: Colors.grey.shade300)),
                       ],
                     ),
+                    SizedBox(height: 20.0),
+                    SignInButton(
+                      Buttons.google,
+                      onPressed: () {
+                        BlocProvider.of<AuthBloc>(context)
+                            .add(ContinueWithGoogleEvent());
+                        Navigator.pushReplacementNamed(
+                            context, '/profileSetup');
+                      },
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15.0)),
+                      text: "Continue with Google",
+                    ),
+                  ],
+                ),
+              ),
+              if (state is AuthLoading)
+                Container(
+                  color: Colors.black.withOpacity(0.5),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text("Loading Profile........"),
+                      Center(child: CircularProgressIndicator()),
+                    ],
                   ),
                 ),
-              ),
-              SizedBox(height: 20.0),
-
-              // Action Buttons
-              ElevatedButton(
-                onPressed: () => _handleSubmit(context),
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15.0),
-                  ),
-                  padding: EdgeInsets.symmetric(vertical: 16.0),
-                ),
-                child: Text(
-                  _isSignUp ? 'Sign Up' : 'Sign In',
-                  style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-                ),
-              ),
-              SizedBox(height: 15.0),
-
-              // Switch Mode Text
-              TextButton(
-                onPressed: _toggleSignUp,
-                child: Text(
-                  _isSignUp ? 'Already have an account? Sign In' : 'Don’t have an account? Sign Up',
-                  style: TextStyle(color: Colors.black87, fontSize: 16.0),
-                ),
-              ),
-
-              SizedBox(height: 20.0),
-
-              // Divider with "OR"
-              Row(
-                children: [
-                  Expanded(child: Divider(color: Colors.grey.shade300)),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Text('OR', style: TextStyle(color: Colors.grey.shade600)),
-                  ),
-                  Expanded(child: Divider(color: Colors.grey.shade300)),
-                ],
-              ),
-              SizedBox(height: 20.0),
-
-              // Social Login
-              SignInButton(
-                Buttons.google,
-                onPressed: () {
-                  BlocProvider.of<AuthBloc>(context).add(ContinueWithGoogleEvent());
-                },
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
-                text: "Continue with Google",
-              ),
             ],
-          ),
-        ),
+          );
+        },
       ),
     );
   }
