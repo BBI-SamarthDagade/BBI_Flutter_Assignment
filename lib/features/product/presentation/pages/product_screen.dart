@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:ecommerce/features/product/presentation/cart_screen.dart';
-import 'package:ecommerce/features/product/presentation/home_page.dart';
-import 'package:ecommerce/features/product/presentation/profile_page.dart';
-import 'package:ecommerce/features/product/presentation/wishlist_screen.dart';
+import 'package:ecommerce/features/product/presentation/pages/cart_screen.dart';
+import 'package:ecommerce/features/product/presentation/pages/home_page.dart';
+import 'package:ecommerce/features/product/presentation/pages/profile_page.dart';
+import 'package:ecommerce/features/product/presentation/pages/wishlist_screen.dart';
 
 void main() {
   runApp(MaterialApp(

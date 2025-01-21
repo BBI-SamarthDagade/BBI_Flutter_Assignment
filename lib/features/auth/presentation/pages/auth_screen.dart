@@ -700,6 +700,8 @@
 
 import 'dart:ffi';
 
+import 'package:ecommerce/features/profile/presentation/bloc/profile_bloc.dart';
+import 'package:ecommerce/features/profile/presentation/bloc/profile_event.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ecommerce/features/auth/presentation/bloc/auth_bloc.dart';
@@ -768,6 +770,7 @@ class _AuthScreenState extends State<AuthScreen>
         listener: (context, state) {
           if (state is AuthSuccess) {
             if (_isSignUp) {
+
               Navigator.pushReplacementNamed(context, '/profileSetup');
             } else {
               Navigator.pushReplacementNamed(context, '/home');
@@ -914,28 +917,29 @@ class _AuthScreenState extends State<AuthScreen>
                     ),
                     SizedBox(height: 10),
                     _isSignUp == false
-                        ?   TextButton(
-                      onPressed: () {
-                         final email = _emailController.text.trim();
+                        ? TextButton(
+                            onPressed: () {
+                              final email = _emailController.text.trim();
 
-                        if (email.isNotEmpty) {
-                          BlocProvider.of<AuthBloc>(context)
-                              .add(PasswrodResetEvent(email));
+                              if (email.isNotEmpty) {
+                                BlocProvider.of<AuthBloc>(context)
+                                    .add(PasswrodResetEvent(email));
 
-                           ScaffoldMessenger.of(context).showSnackBar(
-                           SnackBar(
-                                content: Text("Password reset email sent!")),
-                          );
-                        } else {
-                           ScaffoldMessenger.of(context).showSnackBar(
-                             SnackBar(
-                               content:
-                                   Text("Please enter a valid email address")),
-                           );
-                        }
-                      },
-                     child: Text("Reset Password"),
-                    )
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content:
+                                          Text("Password reset email sent!")),
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content: Text(
+                                          "Please enter a valid email address")),
+                                );
+                              }
+                            },
+                            child: Text("Reset Password"),
+                          )
                         : SizedBox.shrink(),
                     SizedBox(height: 15.0),
                     TextButton(

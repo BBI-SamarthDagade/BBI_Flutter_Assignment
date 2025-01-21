@@ -504,6 +504,342 @@
 //   }
 // }
 
+// import 'dart:io';
+// import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:ecommerce/features/profile/domain/entities/profile_model.dart';
+// import 'package:ecommerce/features/profile/presentation/bloc/profile_bloc.dart';
+// import 'package:ecommerce/features/profile/presentation/bloc/profile_event.dart';
+// import 'package:ecommerce/features/profile/presentation/bloc/profile_state.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:flutter/material.dart';
+// import 'package:flutter_bloc/flutter_bloc.dart';
+
+// class ProfileScreen extends StatefulWidget {
+//   @override
+//   _ProfileScreenState createState() => _ProfileScreenState();
+// }
+
+// class _ProfileScreenState extends State<ProfileScreen> {
+//   final TextEditingController _nameController = TextEditingController();
+//   final TextEditingController _mobileController = TextEditingController();
+//   final TextEditingController _addressController = TextEditingController();
+//   final _formKey = GlobalKey<FormState>();
+//   String? _selectedImageUrl;
+
+//   // Sample profile image URLs
+//   final List<String> _profileImages = [
+//     'https://i.pravatar.cc/150?img=1',
+//     'https://i.pravatar.cc/150?img=2',
+//     'https://i.pravatar.cc/150?img=3',
+//     'https://i.pravatar.cc/150?img=4',
+//     'https://i.pravatar.cc/150?img=5',
+//     'https://i.pravatar.cc/150?img=6',
+//     'https://i.pravatar.cc/150?img=7',
+//     'https://i.pravatar.cc/150?img=8',
+//     'https://i.pravatar.cc/150?img=9',
+//     'https://i.pravatar.cc/150?img=10',
+//     'https://i.pravatar.cc/150?img=11',
+//     'https://i.pravatar.cc/150?img=12',
+//     'https://i.pravatar.cc/150?img=13',
+//     'https://i.pravatar.cc/150?img=14',
+//     'https://i.pravatar.cc/150?img=15',
+//   ];
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     _setInitialUsername();
+//   }
+
+//   Future<void> _setInitialUsername() async {
+//     final user = FirebaseAuth.instance.currentUser;
+//     if (user != null) {
+//       final email = user.email ?? '';
+//       final usernameFromEmail = email.split('@').first;
+//       _nameController.text = usernameFromEmail; // Set default username
+//     }
+//   }
+
+//   void _showImageSelectionDialog() {
+//     showDialog(
+//       context: context,
+//       builder: (context) => AlertDialog(
+//         title: Text('Select Profile Image'),
+//         content: SingleChildScrollView(
+//           child: Wrap(
+//             spacing: 8.0,
+//             runSpacing: 8.0,
+//             children: _profileImages.map((imageUrl) {
+//               return GestureDetector(
+//                 onTap: () {
+//                   setState(() {
+//                     _selectedImageUrl = imageUrl;
+//                   });
+//                   Navigator.pop(context);
+//                 },
+//                 child: CircleAvatar(
+//                   radius: 30,
+//                   backgroundImage: NetworkImage(imageUrl),
+//                 ),
+//               );
+//             }).toList(),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+
+//   void _handleSubmit() {
+//     if (_formKey.currentState?.validate() ?? false) {
+//       final user = FirebaseAuth.instance.currentUser;
+
+//       if (user != null) {
+//         final bloc = context.read<ProfileBloc>();
+//         bloc.add(
+//           SaveProfileEvent(
+//             ProfileModel(
+//               username: _nameController.text,
+//               phoneNumber: _mobileController.text,
+//               address: _addressController.text,
+//               imageUrl: _selectedImageUrl ?? _profileImages[0], // Default image
+//             ),
+//             user.uid,
+//           ),
+//         );
+//       } else {
+//         ScaffoldMessenger.of(context).showSnackBar(
+//           SnackBar(content: Text('Please log in to save your profile.')),
+//         );
+//         Navigator.pushNamed(context, '/login');
+//       }
+//     }
+//   }
+
+//   // void _skipProfileSetup() {
+//   //   final user = FirebaseAuth.instance.currentUser;
+//   //   final username = _nameController.text;
+
+//   //   if (user != null) {
+//   //     final bloc = context.read<ProfileBloc>();
+//   //     bloc.add(
+//   //       SaveProfileEvent(
+//   //         ProfileModel(
+//   //           username: username,
+//   //           phoneNumber: '', // Empty phone number
+//   //           address: '', // Empty address
+//   //           imageUrl: _profileImages[0], // Default image
+//   //         ),
+//   //         user.uid,
+//   //       ),
+//   //     );
+//   //   }
+//   //   Navigator.pushReplacementNamed(context, '/home');
+//   // }
+
+//   void _skipProfileSetup() async {
+//   final user = FirebaseAuth.instance.currentUser;
+
+//   if (user != null) {
+//     final userId = user.uid;
+//     final firestore = FirebaseFirestore.instance;
+//     final docRef = firestore.collection('profiles').doc(userId);
+
+//     try {
+//       final docSnapshot = await docRef.get();
+
+//       // Check if the document exists
+//       if (docSnapshot.exists) {
+//         final data = docSnapshot.data();
+         
+//         // Use existing data
+//         final bloc = context.read<ProfileBloc>();
+        
+//         bloc.add(
+//           SaveProfileEvent(
+//             ProfileModel(
+//               username: data?['username'] ?? '',
+//               phoneNumber: data?['phoneNumber'] ?? '',
+//               address: data?['address'] ?? '',
+//               imageUrl: data?['imageUrl'] ?? _profileImages[0], // Default image if not present
+//             ),
+//             userId,
+//           ),
+//         );
+//       } else {
+//         // If no data is present, use default/empty values
+//         final bloc = context.read<ProfileBloc>();
+//         bloc.add(
+//           SaveProfileEvent(
+//             ProfileModel(
+//               username: _nameController.text.isNotEmpty
+//                   ? _nameController.text
+//                   : user.email?.split('@').first ?? '', // Default username
+//               phoneNumber: '', // Empty phone number
+//               address: '', // Empty address
+//               imageUrl: _profileImages[0], // Default image
+//             ),
+//             userId,
+//           ),
+//         );
+//       }
+//     } catch (e) {
+//       // Handle Firestore errors
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         SnackBar(content: Text('Error retrieving profile data: $e')),
+//       );
+//     }
+//   }
+
+//   // Navigate to home screen
+//   Navigator.pushReplacementNamed(context, '/home');
+// }
+
+
+//   @override
+//   Widget build(BuildContext context) {
+//     final theme = Theme.of(context);
+
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text('Profile Setup'),
+//         centerTitle: true,
+//         backgroundColor: Colors.transparent,
+//         elevation: 0,
+//       ),
+//       body: BlocConsumer<ProfileBloc, ProfileState>(
+//         listener: (context, state) {
+//           if (state is ProfileSaved) {
+//             ScaffoldMessenger.of(context).showSnackBar(
+//               SnackBar(content: Text('Profile saved successfully!')),
+//             );
+//             Navigator.pushReplacementNamed(context, '/home');
+//           } else if (state is ProfileError) {
+//             ScaffoldMessenger.of(context).showSnackBar(
+//               SnackBar(content: Text(state.message)),
+//             );
+//           }
+//         },
+//         builder: (context, state) {
+//           if (state is ProfileLoading) {
+//             return Center(child: CircularProgressIndicator());
+//           } else {
+//             return Padding(
+//               padding: const EdgeInsets.all(16.0),
+//               child: SingleChildScrollView(
+//                 child: Card(
+//                   elevation: 10.0,
+//                   shape: RoundedRectangleBorder(
+//                     borderRadius: BorderRadius.circular(20.0),
+//                   ),
+//                   child: Padding(
+//                     padding: const EdgeInsets.all(20.0),
+//                     child: Form(
+//                       key: _formKey,
+//                       child: Column(
+//                         children: [
+//                           GestureDetector(
+//                             onTap: _showImageSelectionDialog,
+//                             child: CircleAvatar(
+//                               radius: 50,
+//                               backgroundImage: _selectedImageUrl != null
+//                                   ? NetworkImage(_selectedImageUrl!)
+//                                   : null,
+//                               child: _selectedImageUrl == null
+//                                   ? Icon(Icons.camera_alt, size: 50)
+//                                   : null,
+//                             ),
+//                           ),
+//                           SizedBox(height: 20),
+//                           TextFormField(
+//                             controller: _nameController,
+//                             decoration: InputDecoration(
+//                               labelText: 'Name',
+//                               prefixIcon: Icon(Icons.person),
+//                               border: OutlineInputBorder(
+//                                 borderRadius: BorderRadius.circular(15.0),
+//                                 borderSide: BorderSide.none,
+//                               ),
+//                               filled: true,
+//                               fillColor: Colors.grey.shade100,
+//                             ),
+//                             validator: (value) =>
+//                                 value == null || value.isEmpty
+//                                     ? 'Please enter your name'
+//                                     : null,
+//                           ),
+//                           SizedBox(height: 16.0),
+//                           TextFormField(
+//                             controller: _mobileController,
+//                             keyboardType: TextInputType.phone,
+//                             decoration: InputDecoration(
+//                               labelText: 'Mobile Number',
+//                               prefixIcon: Icon(Icons.phone),
+//                               border: OutlineInputBorder(
+//                                 borderRadius: BorderRadius.circular(15.0),
+//                                 borderSide: BorderSide.none,
+//                               ),
+//                               filled: true,
+//                               fillColor: Colors.grey.shade100,
+//                             ),
+//                             validator: (value) {
+//                               if (value == null || value.isEmpty) {
+//                                 return 'Please enter your mobile number';
+//                               } else if (value.length < 10) {
+//                                 return 'Enter a valid mobile number';
+//                               }
+//                               return null;
+//                             },
+//                           ),
+//                           SizedBox(height: 16.0),
+//                           TextFormField(
+//                             controller: _addressController,
+//                             decoration: InputDecoration(
+//                               labelText: 'Address',
+//                               prefixIcon: Icon(Icons.home),
+//                               border: OutlineInputBorder(
+//                                 borderRadius: BorderRadius.circular(15.0),
+//                                 borderSide: BorderSide.none,
+//                               ),
+//                               filled: true,
+//                               fillColor: Colors.grey.shade100,
+//                             ),
+//                             validator: (value) =>
+//                                 value == null || value.isEmpty
+//                                     ? 'Please enter your address'
+//                                     : null,
+//                           ),
+//                           SizedBox(height: 20),
+//                           ElevatedButton(
+//                             onPressed: _handleSubmit,
+//                             child: Text('Save'),
+//                                  style: ElevatedButton.styleFrom(
+//                               shape: RoundedRectangleBorder(
+//                                 borderRadius: BorderRadius.circular(15.0),
+//                               ),
+//                               padding: EdgeInsets.symmetric(vertical: 16.0),
+//                             ),
+//                           ),
+//                           TextButton(
+//                             onPressed: _skipProfileSetup,
+//                             child: Text(
+//                               'Skip Profile Setup',
+//                               style: TextStyle(color: Colors.red),
+//                             ),
+//                           ),
+//                         ],
+//                       ),
+//                     ),
+//                   ),
+//                 ),
+//               ),
+//             );
+//           }
+//         },
+//       ),
+//     );
+//   }
+// }
+
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecommerce/features/profile/domain/entities/profile_model.dart';
@@ -592,9 +928,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void _handleSubmit() {
     if (_formKey.currentState?.validate() ?? false) {
       final user = FirebaseAuth.instance.currentUser;
-
+      
       if (user != null) {
         final bloc = context.read<ProfileBloc>();
+        
         bloc.add(
           SaveProfileEvent(
             ProfileModel(
@@ -614,6 +951,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       }
     }
   }
+  
 
   // void _skipProfileSetup() {
   //   final user = FirebaseAuth.instance.currentUser;
@@ -636,62 +974,58 @@ class _ProfileScreenState extends State<ProfileScreen> {
   //   Navigator.pushReplacementNamed(context, '/home');
   // }
 
-  void _skipProfileSetup() async {
+
+void _skipProfileSetup() async {
   final user = FirebaseAuth.instance.currentUser;
 
   if (user != null) {
     final userId = user.uid;
-    final firestore = FirebaseFirestore.instance;
-    final docRef = firestore.collection('profiles').doc(userId);
+    final profileBloc = context.read<ProfileBloc>();
 
     try {
-      final docSnapshot = await docRef.get();
+      profileBloc.add(GetProfileEvent(userId));
 
-      // Check if the document exists
-      if (docSnapshot.exists) {
-        final data = docSnapshot.data();
-
-        // Use existing data
-        final bloc = context.read<ProfileBloc>();
-        bloc.add(
+      await Future.delayed(Duration(milliseconds: 500));
+       
+      final profileState = profileBloc.state;
+      if (profileState is ProfileLoaded) {
+        profileBloc.add(
           SaveProfileEvent(
             ProfileModel(
-              username: data?['username'] ?? '',
-              phoneNumber: data?['phoneNumber'] ?? '',
-              address: data?['address'] ?? '',
-              imageUrl: data?['imageUrl'] ?? _profileImages[0], // Default image if not present
+              username: profileState.profile.username,
+              phoneNumber: profileState.profile.phoneNumber,
+              address: profileState.profile.address,
+              imageUrl: profileState.profile.imageUrl ?? _profileImages[0],
             ),
             userId,
           ),
         );
       } else {
-        // If no data is present, use default/empty values
-        final bloc = context.read<ProfileBloc>();
-        bloc.add(
+        profileBloc.add(
           SaveProfileEvent(
             ProfileModel(
               username: _nameController.text.isNotEmpty
                   ? _nameController.text
-                  : user.email?.split('@').first ?? '', // Default username
-              phoneNumber: '', // Empty phone number
-              address: '', // Empty address
-              imageUrl: _profileImages[0], // Default image
+                  : user.email?.split('@').first ?? '',
+              phoneNumber: '',
+              address: '',
+              imageUrl: _profileImages[0],
             ),
             userId,
           ),
         );
       }
     } catch (e) {
-      // Handle Firestore errors
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error retrieving profile data: $e')),
       );
     }
   }
 
-  // Navigate to home screen
   Navigator.pushReplacementNamed(context, '/home');
 }
+
+
 
 
   @override

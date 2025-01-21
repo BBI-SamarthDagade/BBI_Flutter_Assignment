@@ -61,7 +61,9 @@ import 'package:ecommerce/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:ecommerce/features/auth/presentation/bloc/auth_event.dart';
 import 'package:ecommerce/features/auth/presentation/bloc/auth_state.dart';
 import 'package:ecommerce/features/auth/presentation/pages/auth_screen.dart';
-import 'package:ecommerce/features/product/presentation/product_screen.dart';
+import 'package:ecommerce/features/product/domain/usecases/fetch_prouct_use_case.dart';
+import 'package:ecommerce/features/product/presentation/bloc/product_bloc.dart';
+import 'package:ecommerce/features/product/presentation/pages/product_screen.dart';
 import 'package:ecommerce/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:ecommerce/features/profile/presentation/pages/profile_screen.dart';
 import 'package:ecommerce/firebase_options.dart';
@@ -100,7 +102,12 @@ class MyApp extends StatelessWidget {
                 saveProfileUseCase: serviceLocator(),
                 updateProfileUseCase: serviceLocator()
             )
-        )
+        ),
+        BlocProvider(   //bloc provider of Profile Feature
+            create: (context) => ProductBloc(
+               FetchProuctUseCase(serviceLocator()),
+            )
+        ),
       ],
       child: MaterialApp(
         title: 'E-Commerce App',

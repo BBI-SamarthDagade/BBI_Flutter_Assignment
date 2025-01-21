@@ -10,6 +10,11 @@ import 'package:ecommerce/features/auth/domain/usecases/password_reset_use_case.
 import 'package:ecommerce/features/auth/domain/usecases/sign_in_with_email_use_case.dart';
 import 'package:ecommerce/features/auth/domain/usecases/sign_out_use_case.dart';
 import 'package:ecommerce/features/auth/domain/usecases/sign_up_with_email_use_case.dart';
+import 'package:ecommerce/features/product/data/data_source/remote_data_source.dart';
+import 'package:ecommerce/features/product/data/repositories/product_repo_impl.dart';
+import 'package:ecommerce/features/product/domain/repositories/product_repository.dart';
+import 'package:ecommerce/features/product/domain/usecases/fetch_prouct_use_case.dart';
+import 'package:ecommerce/features/product/presentation/bloc/product_bloc.dart';
 import 'package:ecommerce/features/profile/data/datasouce/profile_remote_data_source.dart';
 import 'package:ecommerce/features/profile/data/repositories/profile_repo_impl.dart';
 import 'package:ecommerce/features/profile/domain/repository/profile_repository.dart';
@@ -22,6 +27,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 final serviceLocator = GetIt.instance;
 
@@ -102,4 +108,17 @@ Future<void> setUpServiceLocator() async {
       checkProfileStatusUseCase: serviceLocator(),
     ),
   );
+
+  //product feature
+  //data source  of product
+  serviceLocator.registerLazySingleton<RemoteDataSource>(() => RemoteDataSourceImpl(http.Client()));
+   
+  //Repository of product
+  serviceLocator.registerLazySingleton<ProductRepository>(() => ProductRepositoryImpl(serviceLocator()));
+  
+  //use case of product
+  serviceLocator.registerLazySingleton<FetchProuctUseCase>(() => FetchProuctUseCase(serviceLocator()));
+
+  //bloc of product
+  serviceLocator.registerFactory(() => ProductBloc(serviceLocator()));
 }  

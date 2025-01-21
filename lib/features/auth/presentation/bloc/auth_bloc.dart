@@ -94,7 +94,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         (failure) => emit(AuthFailure("Failed to continue With Google")),
         (user){
           emit(AuthSuccess(user));
-
         }
         
       );
