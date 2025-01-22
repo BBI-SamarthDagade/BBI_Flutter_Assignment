@@ -24,7 +24,6 @@ class _ProductScreenState extends State<ProductScreen> {
   int _currentIndex = 0; // Tracks the selected tab
 
   final List<Widget> _screens = [
-    
     HomePage(),
     WishlistScreen(),
     CartScreen(),

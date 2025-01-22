@@ -13,7 +13,11 @@ import 'package:ecommerce/features/auth/domain/usecases/sign_up_with_email_use_c
 import 'package:ecommerce/features/product/data/data_source/remote_data_source.dart';
 import 'package:ecommerce/features/product/data/repositories/product_repo_impl.dart';
 import 'package:ecommerce/features/product/domain/repositories/product_repository.dart';
+import 'package:ecommerce/features/product/domain/usecases/add_to_cart_use_case.dart';
 import 'package:ecommerce/features/product/domain/usecases/fetch_prouct_use_case.dart';
+import 'package:ecommerce/features/product/domain/usecases/get_cart_use_case.dart';
+import 'package:ecommerce/features/product/domain/usecases/remove_from_cart_use_case.dart';
+import 'package:ecommerce/features/product/presentation/bloc/cart_bloc.dart';
 import 'package:ecommerce/features/product/presentation/bloc/product_bloc.dart';
 import 'package:ecommerce/features/profile/data/datasouce/profile_remote_data_source.dart';
 import 'package:ecommerce/features/profile/data/repositories/profile_repo_impl.dart';
@@ -111,7 +115,7 @@ Future<void> setUpServiceLocator() async {
 
   //product feature
   //data source  of product
-  serviceLocator.registerLazySingleton<RemoteDataSource>(() => RemoteDataSourceImpl(http.Client()));
+  serviceLocator.registerLazySingleton<RemoteDataSource>(() => RemoteDataSourceImpl(http.Client(), serviceLocator()));
    
   //Repository of product
   serviceLocator.registerLazySingleton<ProductRepository>(() => ProductRepositoryImpl(serviceLocator()));
@@ -121,4 +125,8 @@ Future<void> setUpServiceLocator() async {
 
   //bloc of product
   serviceLocator.registerFactory(() => ProductBloc(serviceLocator()));
+
+  //bloc oc cart
+  serviceLocator.registerFactory(() => CartBloc(serviceLocator(), serviceLocator(), serviceLocator()));
+
 }  

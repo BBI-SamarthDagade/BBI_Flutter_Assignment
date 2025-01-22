@@ -61,7 +61,11 @@ import 'package:ecommerce/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:ecommerce/features/auth/presentation/bloc/auth_event.dart';
 import 'package:ecommerce/features/auth/presentation/bloc/auth_state.dart';
 import 'package:ecommerce/features/auth/presentation/pages/auth_screen.dart';
+import 'package:ecommerce/features/product/domain/usecases/add_to_cart_use_case.dart';
 import 'package:ecommerce/features/product/domain/usecases/fetch_prouct_use_case.dart';
+import 'package:ecommerce/features/product/domain/usecases/get_cart_use_case.dart';
+import 'package:ecommerce/features/product/domain/usecases/remove_from_cart_use_case.dart';
+import 'package:ecommerce/features/product/presentation/bloc/cart_bloc.dart';
 import 'package:ecommerce/features/product/presentation/bloc/product_bloc.dart';
 import 'package:ecommerce/features/product/presentation/pages/product_screen.dart';
 import 'package:ecommerce/features/profile/presentation/bloc/profile_bloc.dart';
@@ -106,6 +110,13 @@ class MyApp extends StatelessWidget {
         BlocProvider(   //bloc provider of Profile Feature
             create: (context) => ProductBloc(
                FetchProuctUseCase(serviceLocator()),
+            )
+        ),
+         BlocProvider(   //bloc provider of Profile Feature
+            create: (context) => CartBloc(
+               GetCartUseCase(serviceLocator()),
+               AddToCartUseCase(serviceLocator()),
+               RemoveFromCartUseCase(serviceLocator()),
             )
         ),
       ],

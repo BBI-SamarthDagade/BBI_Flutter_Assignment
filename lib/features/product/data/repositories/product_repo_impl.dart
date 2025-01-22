@@ -19,4 +19,35 @@ class ProductRepositoryImpl implements ProductRepository {
       return Left(Failure(message: e.toString()));
     }
   }
+  
+  @override
+  Future<Either<Failure, void>> addToCart(String userId, String productId, int quantity) async {
+    try {
+      final products = await remoteDataSource.addToCart( userId,  productId,  quantity);
+      return Right(products);
+    } catch (e) {
+      return Left(Failure(message: e.toString()));
+    }
+  }
+  
+  @override
+  Future<Either<Failure, List<Map<String, dynamic>>>> getCart(String userId) async {
+   try {
+      final products = await remoteDataSource.getCart(userId);
+      return Right(products);
+    } catch (e) {
+      return Left(Failure(message: e.toString()));
+    }
+  }
+  
+  @override
+  Future<Either<Failure, void>> removeFromCart(String userId, String productId) async {
+    try {
+      final products = await remoteDataSource.removeFromCart(userId, productId);
+      return Right(products);
+    } catch (e) {
+      return Left(Failure(message: e.toString()));
+    }
+  }
+
 }

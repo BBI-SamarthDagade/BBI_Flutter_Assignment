@@ -4,4 +4,7 @@ import 'package:fpdart/fpdart.dart';
 
 abstract class ProductRepository {
   Future<Either<Failure, List<ProductModel>>> getProducts();
+  Future<Either<Failure, void >> addToCart(String userId, String productId, int quantity);
+  Future<Either<Failure, void >> removeFromCart(String userId, String productId);
+   Future<Either<Failure, List<Map<String, dynamic>>>> getCart(String userId);
 }
