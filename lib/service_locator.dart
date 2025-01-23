@@ -18,6 +18,7 @@ import 'package:ecommerce/features/product/domain/usecases/fetch_prouct_use_case
 import 'package:ecommerce/features/product/domain/usecases/get_cart_use_case.dart';
 import 'package:ecommerce/features/product/domain/usecases/remove_from_cart_use_case.dart';
 import 'package:ecommerce/features/product/presentation/bloc/cart_bloc.dart';
+import 'package:ecommerce/features/product/presentation/bloc/cart_event.dart';
 import 'package:ecommerce/features/product/presentation/bloc/product_bloc.dart';
 import 'package:ecommerce/features/profile/data/datasouce/profile_remote_data_source.dart';
 import 'package:ecommerce/features/profile/data/repositories/profile_repo_impl.dart';
@@ -122,11 +123,17 @@ Future<void> setUpServiceLocator() async {
   
   //use case of product
   serviceLocator.registerLazySingleton<FetchProuctUseCase>(() => FetchProuctUseCase(serviceLocator()));
+  
+  serviceLocator.registerLazySingleton<GetCartUseCase>(() => GetCartUseCase(serviceLocator()));
+  serviceLocator.registerLazySingleton<AddToCartUseCase>(() => AddToCartUseCase(serviceLocator()));
+  serviceLocator.registerLazySingleton<RemoveFromCartUseCase>(() => RemoveFromCartUseCase(serviceLocator()));
+
 
   //bloc of product
   serviceLocator.registerFactory(() => ProductBloc(serviceLocator()));
 
   //bloc oc cart
-  serviceLocator.registerFactory(() => CartBloc(serviceLocator(), serviceLocator(), serviceLocator()));
+  //serviceLocator.registerFactory(() => CartBloc(serviceLocator(), serviceLocator(), serviceLocator()));
+  serviceLocator.registerFactory(() => CartBloc(getCartUseCase:  serviceLocator(), addToCartUseCase: serviceLocator(), removeFromCartUseCase: serviceLocator(), fetchProuctUseCase: serviceLocator()));
 
 }  

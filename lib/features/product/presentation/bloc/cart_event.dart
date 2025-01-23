@@ -34,3 +34,7 @@ class RemoveFromCart extends CartEvent {
   });
 
 }
+
+class FetchProductForCart extends CartEvent{
+  
+}

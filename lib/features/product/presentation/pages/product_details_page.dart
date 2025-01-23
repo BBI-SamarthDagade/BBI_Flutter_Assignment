@@ -1,5 +1,9 @@
+import 'package:ecommerce/features/product/presentation/bloc/cart_bloc.dart';
+import 'package:ecommerce/features/product/presentation/bloc/cart_event.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ecommerce/features/product/domain/entity/product_model.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ProductDetailsPage extends StatelessWidget {
   final ProductModel product;
@@ -113,6 +117,13 @@ class ProductDetailsPage extends StatelessWidget {
                         backgroundColor: Colors.blueAccent[100],
                       ),
                       onPressed: () {
+                            context.read<CartBloc>().add(
+                                             AddToCart(
+                                              userId: FirebaseAuth.instance.currentUser!.uid, // Replace with dynamic user ID
+                                              productId: product.id.toString(),
+                                              quantity: 1,
+                                            ),
+                                          );
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text('${product.title} added to Cart')),
                         );

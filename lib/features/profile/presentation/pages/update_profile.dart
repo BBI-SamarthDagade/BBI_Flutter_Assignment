@@ -237,7 +237,9 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
         flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [Colors.lightBlue, Colors.grey],
+              colors: [ Color(0xFFBBDEFB), // Muted blue
+                                Color(0xFFFFE0B2), // Soft orange
+                                Color(0xFFF5F5F5),],
               begin: Alignment.topRight,
               end: Alignment.topLeft,
             ),
@@ -267,7 +269,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
               _addressController.text = state.profile.address ?? '';
               _selectedImageUrl = _selectedImageUrl.isNotEmpty
                   ? _selectedImageUrl
-                  : 'https://i.pravatar.cc/150?img=1'; // Default image';
+                  : state.profile.imageUrl; // Default image';
 
               return Padding(
                 padding: const EdgeInsets.all(16.0),

@@ -11,16 +11,21 @@ void main() {
       primarySwatch: Colors.blue,
       fontFamily: 'Roboto',
     ),
-    home: ProductScreen(),
+    home: BottomNavigation(),
   ));
 }
 
-class ProductScreen extends StatefulWidget {
+class BottomNavigation extends StatefulWidget {
+   
+  final int selectedIndex;
+
+   BottomNavigation({this.selectedIndex = 0});
+  
   @override
   _ProductScreenState createState() => _ProductScreenState();
 }
 
-class _ProductScreenState extends State<ProductScreen> {
+class _ProductScreenState extends State<BottomNavigation> {
   int _currentIndex = 0; // Tracks the selected tab
 
   final List<Widget> _screens = [
@@ -29,7 +34,11 @@ class _ProductScreenState extends State<ProductScreen> {
     CartScreen(),
     UserProfileScreen(),
   ];
-
+   @override
+  void initState() {
+    super.initState();
+    _currentIndex = widget.selectedIndex;
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,7 +60,7 @@ class _ProductScreenState extends State<ProductScreen> {
             ],
           ),
           child: BottomNavigationBar(
-            backgroundColor: Colors.white, // White background for a cleaner look
+            backgroundColor: Colors.orange.withOpacity(0.8), // White background for a cleaner look
             elevation: 0,
             type: BottomNavigationBarType.fixed,
             currentIndex: _currentIndex,
@@ -63,27 +72,27 @@ class _ProductScreenState extends State<ProductScreen> {
             items: [
               BottomNavigationBarItem(
                 icon: Icon(Icons.home_outlined, size: 28),
-                activeIcon: Icon(Icons.home, size: 30, color: Colors.blue),
+                activeIcon: Icon(Icons.home, size: 30, color: Colors.white),
                 label: 'Home',
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.favorite_border, size: 28),
-                activeIcon: Icon(Icons.favorite, size: 30, color: Colors.blue),
+                activeIcon: Icon(Icons.favorite, size: 30, color: Colors.white),
                 label: 'Wishlist',
               ),
                BottomNavigationBarItem(
                 icon: Icon(Icons.shopping_cart_outlined, size: 28),
-                activeIcon: Icon(Icons.shopping_cart, size: 30, color: Colors.blue),
+                activeIcon: Icon(Icons.shopping_cart, size: 30, color: Colors.white),
                 label: 'Cart',
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.person_outline, size: 28),
-                activeIcon: Icon(Icons.person, size: 30, color: Colors.blue),
+                activeIcon: Icon(Icons.person, size: 30, color: Colors.white),
                 label: 'Profile',
               ),
             ],
-            selectedItemColor: Colors.blue, // Primary color for selected items
-            unselectedItemColor: Colors.grey, // Neutral color for unselected items
+            selectedItemColor: Colors.white, // Primary color for selected items
+            unselectedItemColor: Colors.white, // Neutral color for unselected items
             selectedFontSize: 14,
             unselectedFontSize: 12,
             showUnselectedLabels: true,

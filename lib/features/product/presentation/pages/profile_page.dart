@@ -1,23 +1,3 @@
-// import 'package:flutter/material.dart';
-
-// class UserProfileScreen extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text("Profile"),
-//       ),
-
-//       body:  Center(
-//         child:  Text(
-//         'Profile Screen',
-//         style: TextStyle(fontSize: 24),
-//       ),
-//       ),
-//     );
-//   }
-// }
-
 //with default image
 // import 'package:ecommerce/features/auth/presentation/bloc/auth_bloc.dart';
 // import 'package:ecommerce/features/auth/presentation/bloc/auth_event.dart';
@@ -276,6 +256,7 @@
 
 import 'package:ecommerce/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:ecommerce/features/auth/presentation/bloc/auth_event.dart';
+import 'package:ecommerce/features/product/presentation/pages/bottom_navigation.dart';
 import 'package:ecommerce/features/profile/presentation/pages/update_profile.dart';
 import 'package:ecommerce/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:ecommerce/features/profile/presentation/bloc/profile_event.dart';
@@ -319,12 +300,12 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                Color(0xFFE8F0F2), // Soft blue-gray
-                Color(0xFFB2DFDB), // Muted teal
-                Color(0xFF80CBC4), // Light greenish-blue
+                Color(0xFFBBDEFB), // Muted blue
+                Color(0xFFFFE0B2), // Soft orange
+                Color(0xFFF5F5F5), // Off-white
               ],
-              begin: Alignment.bottomCenter,
-              end: Alignment.topCenter,
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
           ),
         ),
@@ -347,12 +328,12 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
                               colors: [
-                                Color(0xFFE8F0F2), // Soft blue-gray
-                                Color(0xFFB2DFDB), // Muted teal
-                                Color(0xFF80CBC4), // Light greenish-blue
+                                Color(0xFFBBDEFB), // Muted blue
+                                Color(0xFFFFE0B2), // Soft orange
+                                Color(0xFFF5F5F5),
                               ],
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
                             ),
                           ),
                         ),
@@ -449,7 +430,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                         icon: Icons.favorite,
                         label: "Wishlist",
                         onTap: () {
-                          // Navigate to Wishlist
+                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => BottomNavigation(selectedIndex: 1) ));
                         },
                       ),
                       _buildAccountOption(

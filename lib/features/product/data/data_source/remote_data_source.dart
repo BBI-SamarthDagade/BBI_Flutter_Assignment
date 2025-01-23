@@ -1,31 +1,3 @@
-// import 'dart:convert';
-// import 'package:ecommerce/features/product/domain/entity/product_model.dart';
-// import 'package:http/http.dart' as http;
-
-// abstract class RemoteDataSource {
-//   Future<List<ProductModel>> fetchProducts();
-// }
-
-// class RemoteDataSourceImpl implements RemoteDataSource {
-//   final http.Client client;
-
-//   RemoteDataSourceImpl(this.client);
-
-//   @override
-//   Future<List<ProductModel>> fetchProducts() async {
-
-//     const String apiUrl = "https://fakestoreapi.com/products";
-
-//     final response = await client.get(Uri.parse(apiUrl));
-//     print(response.statusCode);
-//     if (response.statusCode == 200) {
-//       final List<dynamic> data = json.decode(response.body);
-//       return data.map((json) => ProductModel.fromJson(json)).toList();
-//     } else {
-//       throw Exception('Failed to fetch products. Status Code: ${response.statusCode}');
-//     }
-//   }
-// }
 import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecommerce/features/product/domain/entity/product_model.dart';
@@ -62,43 +34,73 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     }
   }
 
-  //add to cart method
-  @override
   Future<void> addToCart(String userId, String productId, int quantity) async {
-    print("addToCart called with: userId=$userId, productId=$productId, quantity=$quantity");
-
+    // Reference to the user's cart in Firestore
     final cartRef = firestore.collection('cart').doc(userId);
-    
-    final cartDoc = await cartRef.get();
-    
-    if (cartDoc.exists) {
-      List<dynamic> items = cartDoc['items'] ?? [];
-      print(items);
-      bool productExists = false;
 
-      items = items.map((item) {
-        if (item['productId'] == productId) {
-          productExists = true;
-          item['quantity'] += quantity;
+    try {
+      final cartDoc = await cartRef.get();
+
+      if (cartDoc.exists) {
+       List<dynamic> items = cartDoc['items'] ?? [];
+
+        bool productExists = false;
+
+        // Update quantity or mark product as existing
+        items = items
+            .map((item) {
+              if (item['productId'] == productId) {
+                productExists = true;
+                if (quantity > 0) {
+                  // Increment quantity
+                  item['quantity'] += quantity;
+                } else {
+                  // Decrement quantity
+                  item['quantity'] +=
+                      quantity; // quantity is negative for decrement
+                  if (item['quantity'] <= 0) {
+                    return null; // Mark item for removal
+                  }
+                }
+              }
+              return item;
+            })
+            .where((item) => item != null)
+            .toList(); // Remove items marked as null
+
+        // Add new product if not already in cart
+        if (!productExists && quantity > 0) {
+          items.add({'productId': productId, 'quantity': quantity});
         }
-        return item;
-      }).toList();
 
-      if (!productExists) {
-        items.add({'productId': productId, 'quantity': quantity});
+        if (items.isEmpty) {
+          // If the cart becomes empty, delete the document
+          await cartRef.delete();
+        } else {
+          // Update Firestore with the modified cart items
+          await cartRef.update({'items': items});
+        }
+      } else {
+        if (quantity > 0) {
+          // If cart doesn't exist and quantity > 0, create a new cart
+          await cartRef.set({
+            'items': [
+              {'productId': productId, 'quantity': quantity}
+            ]
+          });
+        } else {
+          print("Cannot decrement a product from an empty cart");
+        }
       }
-
-      await cartRef.update({'items': items});
-    } else {
-      await cartRef.set({
-        'items': [{'productId': productId, 'quantity': quantity}]
-      });
+    } catch (e) {
+      print("Error in addToCart: $e");
+      throw Exception("Failed to update the cart: $e");
     }
   }
 
 //remove from cart
   @override
-   Future<void> removeFromCart(String userId, String productId) async {
+  Future<void> removeFromCart(String userId, String productId) async {
     final cartRef = firestore.collection('cart').doc(userId);
     final cartDoc = await cartRef.get();
 
@@ -110,9 +112,8 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     }
   }
 
-
 //get cart
- @override 
+  @override
   Future<List<Map<String, dynamic>>> getCart(String userId) async {
     final cartRef = firestore.collection('cart').doc(userId);
     final cartDoc = await cartRef.get();

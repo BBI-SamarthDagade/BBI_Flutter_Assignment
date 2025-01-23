@@ -66,10 +66,11 @@ import 'package:ecommerce/features/product/domain/usecases/fetch_prouct_use_case
 import 'package:ecommerce/features/product/domain/usecases/get_cart_use_case.dart';
 import 'package:ecommerce/features/product/domain/usecases/remove_from_cart_use_case.dart';
 import 'package:ecommerce/features/product/presentation/bloc/cart_bloc.dart';
+import 'package:ecommerce/features/product/presentation/bloc/cart_event.dart';
 import 'package:ecommerce/features/product/presentation/bloc/product_bloc.dart';
-import 'package:ecommerce/features/product/presentation/pages/product_screen.dart';
+import 'package:ecommerce/features/product/presentation/pages/bottom_navigation.dart';
 import 'package:ecommerce/features/profile/presentation/bloc/profile_bloc.dart';
-import 'package:ecommerce/features/profile/presentation/pages/profile_screen.dart';
+import 'package:ecommerce/features/profile/presentation/pages/profile_setup_screen.dart';
 import 'package:ecommerce/firebase_options.dart';
 import 'package:ecommerce/service_locator.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -107,17 +108,25 @@ class MyApp extends StatelessWidget {
                 updateProfileUseCase: serviceLocator()
             )
         ),
-        BlocProvider(   //bloc provider of Profile Feature
+        BlocProvider(   //bloc provider of Product Feature
             create: (context) => ProductBloc(
                FetchProuctUseCase(serviceLocator()),
             )
         ),
-         BlocProvider(   //bloc provider of Profile Feature
+        //  BlocProvider(   //bloc provider of Cart Feature
+        //     create: (context) => CartBloc(
+        //        GetCartUseCase(serviceLocator()),
+        //        AddToCartUseCase(serviceLocator()),
+        //        RemoveFromCartUseCase(serviceLocator()),
+        //     ),
+        // ),
+             BlocProvider(   //bloc provider of Cart Feature
             create: (context) => CartBloc(
-               GetCartUseCase(serviceLocator()),
-               AddToCartUseCase(serviceLocator()),
-               RemoveFromCartUseCase(serviceLocator()),
-            )
+               getCartUseCase: serviceLocator(),
+               addToCartUseCase: serviceLocator(),
+               removeFromCartUseCase: serviceLocator(),
+               fetchProuctUseCase: serviceLocator(),
+            )..add(FetchProductForCart()),
         ),
       ],
       child: MaterialApp(
@@ -126,18 +135,17 @@ class MyApp extends StatelessWidget {
         home: BlocBuilder<AuthBloc, AuthState>(
           builder: (context, state) {
             if (state is Authenticated) {
-              print(state);
-              return ProductScreen();   //to fix changes home screen
+              return BottomNavigation();
             }  
-           print("bro here this is printing");
+          
             return AuthScreen();
            
           },
         ),
         routes: {
-          '/profileSetup': (context) => ProfileScreen(),
+          '/profileSetup': (context) => ProfileSetupScreen(),
           '/auth': (context) => AuthScreen(),
-          '/home': (context) => ProductScreen(),  //change to home screen for privious code
+          '/home': (context) => BottomNavigation(),
         },
       ),
     );
