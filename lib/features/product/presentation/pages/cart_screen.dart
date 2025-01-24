@@ -20,7 +20,7 @@
 //         builder: (context, state) {
 //           if (state is CartLoading) {
 //             return Center(child: CircularProgressIndicator());
-//           } 
+//           }
 //           else if (state is CartError) {
 //             return Center(
 //               child: Text(
@@ -28,7 +28,7 @@
 //                 style: TextStyle(color: Colors.red, fontSize: 18),
 //               ),
 //             );
-//           } 
+//           }
 //           else if (state is CartLoaded) {
 //             final cartItems = state.items;
 
@@ -234,7 +234,7 @@
 //                       SizedBox(height: 12),
 //                       ElevatedButton(
 //                         onPressed: () {
-                          
+
 //                         },
 //                         style: ElevatedButton.styleFrom(
 //                           backgroundColor: Colors.orange,
@@ -275,6 +275,7 @@
 import 'package:ecommerce/features/product/presentation/bloc/cart_bloc.dart';
 import 'package:ecommerce/features/product/presentation/bloc/cart_event.dart';
 import 'package:ecommerce/features/product/presentation/bloc/cart_state.dart';
+import 'package:ecommerce/features/product/presentation/widget/payment_success_popup.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -283,12 +284,33 @@ class CartScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Trigger LoadCart event
-    context.read<CartBloc>().add(LoadCart(FirebaseAuth.instance.currentUser!.uid));
+    context
+        .read<CartBloc>()
+        .add(LoadCart(FirebaseAuth.instance.currentUser!.uid));
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Shopping Cart"),
-        centerTitle: true,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Icon(
+              Icons.shopping_cart,
+              color: Colors.orange,
+              size: 28,
+            ),
+            const SizedBox(width: 15),
+            const Text(
+              "Shopping Cart",
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 22,
+              ),
+            ),
+          ],
+        ),
+        centerTitle: false,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
       ),
       body: BlocBuilder<CartBloc, CartState>(
         builder: (context, state) {
@@ -329,13 +351,14 @@ class CartScreen extends StatelessWidget {
                       final productDetails = item['productDetails'] ?? {};
                       final productTitle =
                           productDetails['title'] ?? 'Unknown Title';
-                      final imageUrl =
-                          productDetails['image'] ?? 'https://via.placeholder.com/80';
+                      final imageUrl = productDetails['image'] ??
+                          'https://via.placeholder.com/80';
                       final quantity = (item['quantity'] ?? 0) as int;
                       final price = (productDetails['price'] ?? 0.0) as num;
 
                       return Card(
-                        margin: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                        margin:
+                            EdgeInsets.symmetric(horizontal: 8, vertical: 5),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -387,8 +410,12 @@ class CartScreen extends StatelessWidget {
                                         // Decrement or delete button
                                         IconButton(
                                           icon: Icon(
-                                            quantity > 1 ? Icons.remove : Icons.delete,
-                                            color: quantity > 1 ? Colors.blue : Colors.red,
+                                            quantity > 1
+                                                ? Icons.remove
+                                                : Icons.delete,
+                                            color: quantity > 1
+                                                ? Colors.blue
+                                                : Colors.red,
                                           ),
                                           onPressed: () {
                                             if (quantity > 1) {
@@ -420,7 +447,8 @@ class CartScreen extends StatelessWidget {
                                         ),
                                         // Increment button
                                         IconButton(
-                                          icon: Icon(Icons.add, color: Colors.blue),
+                                          icon: Icon(Icons.add,
+                                              color: Colors.blue),
                                           onPressed: () {
                                             context.read<CartBloc>().add(
                                                   AddToCart(
@@ -492,12 +520,13 @@ class CartScreen extends StatelessWidget {
                           ),
                           Text(
                             '₹${cartItems.fold<double>(
-                              0.0,
-                              (total, item) =>
-                                  total +
-                                  ((item['quantity'] ?? 0) as int) *
-                                      ((item['productDetails']?['price'] ?? 0.0) as num),
-                            ).toStringAsFixed(2)}',
+                                  0.0,
+                                  (total, item) =>
+                                      total +
+                                      ((item['quantity'] ?? 0) as int) *
+                                          ((item['productDetails']?['price'] ??
+                                              0.0) as num),
+                                ).toStringAsFixed(2)}',
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -521,7 +550,9 @@ class CartScreen extends StatelessWidget {
                                       (total, item) =>
                                           total +
                                           ((item['quantity'] ?? 0) as int) *
-                                              ((item['productDetails']?['price'] ?? 0.0) as num),
+                                              ((item['productDetails']
+                                                      ?['price'] ??
+                                                  0.0) as num),
                                     ) <
                                     500
                                 ? "₹40.00"
@@ -546,22 +577,21 @@ class CartScreen extends StatelessWidget {
                           ),
                           Text(
                             '₹${(cartItems.fold<double>(
-                              0.0,
-                              (total, item) =>
-                                  total +
-                                  ((item['quantity'] ?? 0) as int) *
-                                      ((item['productDetails']?['price'] ?? 0.0) as num),
-                            ) +
-                                (cartItems.fold<double>(
-                                          0.0,
-                                          (total, item) =>
-                                              total +
-                                              ((item['quantity'] ?? 0) as int) *
-                                                  ((item['productDetails']?['price'] ?? 0.0) as num),
-                                        ) <
-                                        500
-                                    ? 40
-                                    : 0)).toStringAsFixed(2)}',
+                                  0.0,
+                                  (total, item) =>
+                                      total +
+                                      ((item['quantity'] ?? 0) as int) *
+                                          ((item['productDetails']?['price'] ??
+                                              0.0) as num),
+                                ) + (cartItems.fold<double>(
+                                      0.0,
+                                      (total, item) =>
+                                          total +
+                                          ((item['quantity'] ?? 0) as int) *
+                                              ((item['productDetails']
+                                                      ?['price'] ??
+                                                  0.0) as num),
+                                    ) < 500 ? 40 : 0)).toStringAsFixed(2)}',
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -573,7 +603,7 @@ class CartScreen extends StatelessWidget {
                       SizedBox(height: 12),
                       ElevatedButton(
                         onPressed: () {
-                           Navigator.pushReplacementNamed(context, '/profileSetup');
+                          showPaymentSuccessDialog(context);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white,

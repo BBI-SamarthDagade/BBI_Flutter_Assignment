@@ -16,7 +16,9 @@ import 'package:ecommerce/features/product/domain/repositories/product_repositor
 import 'package:ecommerce/features/product/domain/usecases/add_to_cart_use_case.dart';
 import 'package:ecommerce/features/product/domain/usecases/fetch_prouct_use_case.dart';
 import 'package:ecommerce/features/product/domain/usecases/get_cart_use_case.dart';
+import 'package:ecommerce/features/product/domain/usecases/get_favourite_products_id_use_case.dart';
 import 'package:ecommerce/features/product/domain/usecases/remove_from_cart_use_case.dart';
+import 'package:ecommerce/features/product/domain/usecases/toggle_favourite_use_case.dart';
 import 'package:ecommerce/features/product/presentation/bloc/cart_bloc.dart';
 import 'package:ecommerce/features/product/presentation/bloc/cart_event.dart';
 import 'package:ecommerce/features/product/presentation/bloc/product_bloc.dart';
@@ -124,16 +126,20 @@ Future<void> setUpServiceLocator() async {
   //use case of product
   serviceLocator.registerLazySingleton<FetchProuctUseCase>(() => FetchProuctUseCase(serviceLocator()));
   
+  //use case of cart
   serviceLocator.registerLazySingleton<GetCartUseCase>(() => GetCartUseCase(serviceLocator()));
   serviceLocator.registerLazySingleton<AddToCartUseCase>(() => AddToCartUseCase(serviceLocator()));
   serviceLocator.registerLazySingleton<RemoveFromCartUseCase>(() => RemoveFromCartUseCase(serviceLocator()));
+  
+  //use case of wishlist
+  serviceLocator.registerLazySingleton<GetFavouriteProductsIdUsecase>(() => GetFavouriteProductsIdUsecase(serviceLocator()));
+  serviceLocator.registerLazySingleton<ToggleFavouriteUsecase>(() => ToggleFavouriteUsecase(serviceLocator()));
 
 
   //bloc of product
-  serviceLocator.registerFactory(() => ProductBloc(serviceLocator()));
+  serviceLocator.registerFactory(() => ProductBloc(serviceLocator(), serviceLocator(), serviceLocator()));
 
-  //bloc oc cart
-  //serviceLocator.registerFactory(() => CartBloc(serviceLocator(), serviceLocator(), serviceLocator()));
+  //bloc of cart
   serviceLocator.registerFactory(() => CartBloc(getCartUseCase:  serviceLocator(), addToCartUseCase: serviceLocator(), removeFromCartUseCase: serviceLocator(), fetchProuctUseCase: serviceLocator()));
 
 }  

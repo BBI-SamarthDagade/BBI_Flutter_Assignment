@@ -23,3 +23,9 @@ class ProductError extends ProductState {
   ProductError(this.message);
 
 }
+
+class FavoriteProductsLoaded extends ProductState {
+  final List<int> favoriteProductIds;
+
+  FavoriteProductsLoaded(this.favoriteProductIds);
+}

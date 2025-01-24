@@ -48,16 +48,16 @@ class ProductModel {
   final String description;
   final String image;
   final double rate;
-  //bool isFavorite;
+  bool isFavorite;
 
-   const ProductModel({
+   ProductModel({
     required this.id,
     required this.title,
     required this.price,
     required this.description,
     required this.image,
     required this.rate,
-   // this.isFavorite = false,
+   this.isFavorite = false,
   });
 
   // Factory method to create a model from JSON
@@ -69,7 +69,7 @@ class ProductModel {
       description: json['description'],
       image: json['thumbnail'],
       rate: (json['rating'] as num).toDouble(),
-      //isFavorite: json['isFavorite']??false,
+      isFavorite: json['isFavorite'] ?? false,
     );
   }
 

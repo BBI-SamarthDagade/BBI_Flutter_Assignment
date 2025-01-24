@@ -9,6 +9,9 @@ abstract class RemoteDataSource {
   Future<void> addToCart(String userId, String productId, int quantity);
   Future<void> removeFromCart(String userId, String productId);
   Future<List<Map<String, dynamic>>> getCart(String userId);
+  
+   Future<void> toggleFavorite(String userId, int productId, bool isFavorite);
+   Future<List<int>> getFavouriteProductsId(String userId);
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -122,5 +125,51 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return List<Map<String, dynamic>>.from(cartDoc['items'] ?? []);
     }
     return [];
+  }
+
+  //toggle favorite
+  Future<void> toggleFavorite(String userId, int productId, bool isFavorite) async {
+  try {
+    final userRef = firestore.collection('wishlist').doc(userId);
+    
+    final docSnapshot = await userRef.get();
+
+    if (!docSnapshot.exists) {
+
+      await userRef.set({
+        'favourite': [],
+      });
+    }
+
+    if (isFavorite) {
+      await userRef.update({
+        'favourite': FieldValue.arrayUnion([productId]),
+      });
+    } else {
+      await userRef.update({
+        'favourite': FieldValue.arrayRemove([productId]),
+      });
+    }
+  } catch (e) {
+    throw Exception('Failed to toggle favorite: $e');
+  }
+}
+
+  @override
+  Future<List<int>> getFavouriteProductsId(String userId) async {
+    try {
+      final userRef = firestore.collection('wishlist').doc(userId);
+      final docSnapshot = await userRef.get();
+
+      if (docSnapshot.exists) {
+        final data = docSnapshot.data();
+        if (data != null && data.containsKey('favourite')) {
+          return List<int>.from(data['favourite']);
+        }
+      }
+      return [];
+    } catch (e) {
+      throw Exception('Failed to fetch favorites: $e');
+    }
   }
 }
