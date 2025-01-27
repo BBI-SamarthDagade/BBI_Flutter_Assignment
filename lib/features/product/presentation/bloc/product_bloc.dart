@@ -20,7 +20,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   List<ProductModel> _productModel = [];
   
   ProductBloc(this.getProducts, this.getFavouriteProductsIdUsecase, this.toggleFavouriteUsecase) : super(ProductInitial()) {
-
+    print("product bloc instance created");
     on<GetProductEvent>((event, emit) async {
       emit(ProductLoading());
 

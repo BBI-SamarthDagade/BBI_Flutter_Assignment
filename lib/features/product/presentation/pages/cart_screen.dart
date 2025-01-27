@@ -272,6 +272,7 @@
 //   }
 // }
 
+import 'package:ecommerce/constants/constants.dart';
 import 'package:ecommerce/features/product/presentation/bloc/cart_bloc.dart';
 import 'package:ecommerce/features/product/presentation/bloc/cart_event.dart';
 import 'package:ecommerce/features/product/presentation/bloc/cart_state.dart';
@@ -295,7 +296,7 @@ class CartScreen extends StatelessWidget {
           children: [
             Icon(
               Icons.shopping_cart,
-              color: Colors.orange,
+              color: Constant.colorOrg,
               size: 28,
             ),
             const SizedBox(width: 15),
@@ -329,13 +330,14 @@ class CartScreen extends StatelessWidget {
             // Handle empty cart scenario
             if (cartItems.isEmpty) {
               return Center(
-                child: Text(
-                  "Your cart is empty",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                child: Image.asset(
+                  'assets/animations/animation.gif', // Path to your Lottie file
+                  width: 150,
+                  height: 150,
+                  fit: BoxFit.fill,
                 ),
               );
             }
-
             return Column(
               children: [
                 Expanded(

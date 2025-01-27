@@ -1,5 +1,4 @@
-import 'dart:io';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ecommerce/constants/constants.dart';
 import 'package:ecommerce/features/profile/domain/entities/profile_model.dart';
 import 'package:ecommerce/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:ecommerce/features/profile/presentation/bloc/profile_event.dart';
@@ -17,27 +16,27 @@ class _ProfileScreenState extends State<ProfileSetupScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _mobileController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
   String? _selectedImageUrl;
+  final _formKey = GlobalKey<FormState>();
 
   // Sample profile image URLs
-  final List<String> _profileImages = [
-    'https://i.pravatar.cc/150?img=1',
-    'https://i.pravatar.cc/150?img=2',
-    'https://i.pravatar.cc/150?img=3',
-    'https://i.pravatar.cc/150?img=4',
-    'https://i.pravatar.cc/150?img=5',
-    'https://i.pravatar.cc/150?img=6',
-    'https://i.pravatar.cc/150?img=7',
-    'https://i.pravatar.cc/150?img=8',
-    'https://i.pravatar.cc/150?img=9',
-    'https://i.pravatar.cc/150?img=10',
-    'https://i.pravatar.cc/150?img=11',
-    'https://i.pravatar.cc/150?img=12',
-    'https://i.pravatar.cc/150?img=13',
-    'https://i.pravatar.cc/150?img=14',
-    'https://i.pravatar.cc/150?img=15',
-  ];
+  // final List<String> _profileImages = [
+  //   'https://i.pravatar.cc/150?img=1',
+  //   'https://i.pravatar.cc/150?img=2',
+  //   'https://i.pravatar.cc/150?img=3',
+  //   'https://i.pravatar.cc/150?img=4',
+  //   'https://i.pravatar.cc/150?img=5',
+  //   'https://i.pravatar.cc/150?img=6',
+  //   'https://i.pravatar.cc/150?img=7',
+  //   'https://i.pravatar.cc/150?img=8',
+  //   'https://i.pravatar.cc/150?img=9',
+  //   'https://i.pravatar.cc/150?img=10',
+  //   'https://i.pravatar.cc/150?img=11',
+  //   'https://i.pravatar.cc/150?img=12',
+  //   'https://i.pravatar.cc/150?img=13',
+  //   'https://i.pravatar.cc/150?img=14',
+  //   'https://i.pravatar.cc/150?img=15',
+  // ];
 
   @override
   void initState() {
@@ -47,7 +46,7 @@ class _ProfileScreenState extends State<ProfileSetupScreen> {
   }
 
   Future<void> _setInitialUsername() async {
-    final user = FirebaseAuth.instance.currentUser;
+    final user = getCurrentUser();
     if (user != null) {
       final email = user.email ?? '';
       final usernameFromEmail = email.split('@').first;
@@ -56,8 +55,7 @@ class _ProfileScreenState extends State<ProfileSetupScreen> {
   }
 
   Future<void> _loadProfileData() async {
-    final user = FirebaseAuth.instance.currentUser;
-    print("is it working");
+    final user = getCurrentUser();
     if (user != null) {
       context.read<ProfileBloc>().add(GetProfileEvent(user.uid));
     }
@@ -65,7 +63,7 @@ class _ProfileScreenState extends State<ProfileSetupScreen> {
 
   void _handleSubmit() {
     if (_formKey.currentState?.validate() ?? false) {
-      final user = FirebaseAuth.instance.currentUser;
+      final user = getCurrentUser();
 
       if (user != null) {
         final bloc = context.read<ProfileBloc>();
@@ -75,7 +73,8 @@ class _ProfileScreenState extends State<ProfileSetupScreen> {
               username: _nameController.text,
               phoneNumber: _mobileController.text,
               address: _addressController.text,
-              imageUrl: _selectedImageUrl ?? _profileImages[0], // Default image
+              imageUrl: _selectedImageUrl ??
+                  Constant.profileImages[0], // Default image
             ),
             user.uid,
           ),
@@ -90,7 +89,7 @@ class _ProfileScreenState extends State<ProfileSetupScreen> {
   }
 
   void _skipProfileSetup() async {
-    final user = FirebaseAuth.instance.currentUser;
+    final user = getCurrentUser();
 
     if (user != null) {
       final userId = user.uid;
@@ -109,7 +108,8 @@ class _ProfileScreenState extends State<ProfileSetupScreen> {
                 username: profileState.profile.username,
                 phoneNumber: profileState.profile.phoneNumber,
                 address: profileState.profile.address,
-                imageUrl: profileState.profile.imageUrl ?? _profileImages[0],
+                imageUrl:
+                    profileState.profile.imageUrl ?? Constant.profileImages[0],
               ),
               userId,
             ),
@@ -123,7 +123,7 @@ class _ProfileScreenState extends State<ProfileSetupScreen> {
                     : user.email?.split('@').first ?? '',
                 phoneNumber: '',
                 address: '',
-                imageUrl: _profileImages[0],
+                imageUrl: Constant.profileImages[0],
               ),
               userId,
             ),
@@ -143,15 +143,31 @@ class _ProfileScreenState extends State<ProfileSetupScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Confirm Profile Setup'),
-        centerTitle: true,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Icon(
+              Icons.check_circle,
+              color: Constant.colorOrg,
+              size: 28,
+            ),
+            const SizedBox(width: 15),
+            const Text(
+              "Confirm Profile Setup",
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 22,
+              ),
+            ),
+          ],
+        ),
+        centerTitle: false,
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
       body: BlocConsumer<ProfileBloc, ProfileState>(
         listener: (context, state) {
           if (state is ProfileLoaded) {
-            print("prifile loaded called");
             // Populate fields with loaded profile data
             _nameController.text = state.profile.username;
             _mobileController.text = state.profile.phoneNumber ?? '';
@@ -170,7 +186,7 @@ class _ProfileScreenState extends State<ProfileSetupScreen> {
             Navigator.pushReplacementNamed(context, '/home');
           } else if (state is ProfileError) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message)),
+              SnackBar(content: Text("please update or skip profile can update it later")),
             );
           }
         },
@@ -293,6 +309,12 @@ class _ProfileScreenState extends State<ProfileSetupScreen> {
     );
   }
 
+  //method to get current user from firebase
+  User? getCurrentUser() {
+    return FirebaseAuth.instance.currentUser;
+  }
+
+  //method to show image selection dialog
   void _showImageSelectionDialog() {
     showDialog(
       context: context,
@@ -302,7 +324,7 @@ class _ProfileScreenState extends State<ProfileSetupScreen> {
           child: Wrap(
             spacing: 8.0,
             runSpacing: 8.0,
-            children: _profileImages.map((imageUrl) {
+            children: Constant.profileImages.map((imageUrl) {
               return GestureDetector(
                 onTap: () {
                   setState(() {

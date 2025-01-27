@@ -132,6 +132,7 @@
 //   }
 // }
 
+import 'package:ecommerce/constants/constants.dart';
 import 'package:ecommerce/features/profile/domain/entities/profile_model.dart';
 import 'package:ecommerce/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:ecommerce/features/profile/presentation/bloc/profile_event.dart';
@@ -153,23 +154,23 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
   String _selectedImageUrl = '';
 
   // Sample network images
-  final List<String> _profileImages = [
-    'https://i.pravatar.cc/150?img=1',
-    'https://i.pravatar.cc/150?img=2',
-    'https://i.pravatar.cc/150?img=3',
-    'https://i.pravatar.cc/150?img=4',
-    'https://i.pravatar.cc/150?img=5',
-    'https://i.pravatar.cc/150?img=6',
-    'https://i.pravatar.cc/150?img=7',
-    'https://i.pravatar.cc/150?img=8',
-    'https://i.pravatar.cc/150?img=9',
-    'https://i.pravatar.cc/150?img=10',
-    'https://i.pravatar.cc/150?img=11',
-    'https://i.pravatar.cc/150?img=12',
-    'https://i.pravatar.cc/150?img=13',
-    'https://i.pravatar.cc/150?img=14',
-    'https://i.pravatar.cc/150?img=15',
-  ];
+  // final List<String> _profileImages = [
+  //   'https://i.pravatar.cc/150?img=1',
+  //   'https://i.pravatar.cc/150?img=2',
+  //   'https://i.pravatar.cc/150?img=3',
+  //   'https://i.pravatar.cc/150?img=4',
+  //   'https://i.pravatar.cc/150?img=5',
+  //   'https://i.pravatar.cc/150?img=6',
+  //   'https://i.pravatar.cc/150?img=7',
+  //   'https://i.pravatar.cc/150?img=8',
+  //   'https://i.pravatar.cc/150?img=9',
+  //   'https://i.pravatar.cc/150?img=10',
+  //   'https://i.pravatar.cc/150?img=11',
+  //   'https://i.pravatar.cc/150?img=12',
+  //   'https://i.pravatar.cc/150?img=13',
+  //   'https://i.pravatar.cc/150?img=14',
+  //   'https://i.pravatar.cc/150?img=15',
+  // ];
 
   @override
   void initState() {
@@ -207,7 +208,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
           child: Wrap(
             spacing: 8.0,
             runSpacing: 8.0,
-            children: _profileImages.map((imageUrl) {
+            children: Constant.profileImages.map((imageUrl) {
               return GestureDetector(
                 onTap: () {
                   setState(() {

@@ -1,4 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:ecommerce/constants/constants.dart';
 import 'package:ecommerce/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:ecommerce/features/auth/presentation/bloc/auth_event.dart';
 import 'package:ecommerce/features/product/presentation/bloc/cart_bloc.dart';
@@ -29,7 +30,7 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: Row(
           children: [
-            Icon(Icons.shopping_bag, color: Colors.orange, size: 28),
+            Icon(Icons.shopping_bag, color: Constant.colorOrg, size: 28),
             SizedBox(width: 8), // Add spacing
             Text(
               'Products',
@@ -176,7 +177,7 @@ class _HomePageState extends State<HomePage> {
                                   padding: EdgeInsets.symmetric(
                                       horizontal: 10, vertical: 5),
                                   decoration: BoxDecoration(
-                                    color: Colors.orange
+                                    color: Constant.colorOrg
                                         .withOpacity(0.9), // Price tag color
                                     borderRadius: BorderRadius.circular(15),
                                   ),

@@ -27,7 +27,6 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
           await _firebaseFirestore.collection('profiles').doc(userId).get();
 
       if (!snapshot.exists) {
-          print("snapshout not exitst");
           throw 'profile not found';
       }
 

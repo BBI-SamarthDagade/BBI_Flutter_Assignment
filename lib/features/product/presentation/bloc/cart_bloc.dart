@@ -24,6 +24,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     required this.removeFromCartUseCase,
     required this.fetchProuctUseCase,
   }) : super(CartInitial()) {
+    print("cart bloc instance created");
     on<LoadCart>(_onLoadCart);
     on<AddToCart>(_onAddToCart);
     on<RemoveFromCart>(_onRemoveFromCart);

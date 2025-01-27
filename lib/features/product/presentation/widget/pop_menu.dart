@@ -1,3 +1,4 @@
+import 'package:ecommerce/constants/constants.dart';
 import 'package:ecommerce/features/product/presentation/pages/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -64,7 +65,7 @@ class UserMenu extends StatelessWidget {
             value: 'settings',
             child: Row(
               children: [
-                Icon(Icons.settings, color: Colors.orange),
+                Icon(Icons.settings, color: Constant.colorOrg),
                 SizedBox(width: 8),
                 Text('Settings'),
               ],

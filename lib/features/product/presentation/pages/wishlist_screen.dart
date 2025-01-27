@@ -18,6 +18,7 @@
 //   }
 // }
 
+import 'package:ecommerce/constants/constants.dart';
 import 'package:ecommerce/features/product/presentation/bloc/product_bloc.dart';
 import 'package:ecommerce/features/product/presentation/widget/product_card.dart';
 import 'package:flutter/material.dart';
@@ -33,7 +34,7 @@ class WishlistScreen extends StatelessWidget {
           children: [
             Icon(
               Icons.favorite,
-              color: Colors.orange,
+              color: Constant.colorOrg,
               size: 28,
             ),
             const SizedBox(width: 15),

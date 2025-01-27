@@ -1,3 +1,4 @@
+import 'package:ecommerce/constants/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:ecommerce/features/product/presentation/pages/cart_screen.dart';
 import 'package:ecommerce/features/product/presentation/pages/home_page.dart';
@@ -17,7 +18,7 @@ void main() {
 
 class BottomNavigation extends StatefulWidget {
    
-  final int selectedIndex;
+  final int? selectedIndex;
 
    BottomNavigation({this.selectedIndex = 0});
   
@@ -37,7 +38,7 @@ class _ProductScreenState extends State<BottomNavigation> {
    @override
   void initState() {
     super.initState();
-    _currentIndex = widget.selectedIndex;
+    _currentIndex = widget.selectedIndex!;
   }
   @override
   Widget build(BuildContext context) {
@@ -60,7 +61,7 @@ class _ProductScreenState extends State<BottomNavigation> {
             ],
           ),
           child: BottomNavigationBar(
-            backgroundColor: Colors.orange.withOpacity(0.8), // White background for a cleaner look
+            backgroundColor: Constant.colorOrg.withOpacity(0.8), // White background for a cleaner look
             elevation: 0,
             type: BottomNavigationBarType.fixed,
             currentIndex: _currentIndex,

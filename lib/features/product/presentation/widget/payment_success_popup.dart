@@ -1,3 +1,4 @@
+import 'package:ecommerce/constants/constants.dart';
 import 'package:flutter/material.dart';
 
 void showPaymentSuccessDialog(BuildContext context) {
@@ -22,12 +23,12 @@ void showPaymentSuccessDialog(BuildContext context) {
                   Container(
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Colors.green.withOpacity(0.2),
+                      color: Constant.colorOrg.withOpacity(0.2),
                     ),
-                    padding: const EdgeInsets.all(15),
-                    child: const Icon(
+                    padding:  EdgeInsets.all(15),
+                    child:  Icon(
                       Icons.check_circle,
-                      color: Colors.green,
+                      color: Constant.colorOrg,
                       size: 50,
                     ),
                   ),
@@ -54,7 +55,7 @@ void showPaymentSuccessDialog(BuildContext context) {
                     style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10)),
-                      backgroundColor: Colors.green,
+                      backgroundColor: Constant.colorOrg,
                     ),
                     onPressed: () {
                       Navigator.of(context).pop(); // Close dialog

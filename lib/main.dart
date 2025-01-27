@@ -51,22 +51,10 @@
 //   }
 // }
 
-import 'package:ecommerce/features/auth/domain/usecases/continue_with_google_use_case.dart';
-import 'package:ecommerce/features/auth/domain/usecases/get_user_id_from_local.dart';
-import 'package:ecommerce/features/auth/domain/usecases/password_reset_use_case.dart';
-import 'package:ecommerce/features/auth/domain/usecases/sign_in_with_email_use_case.dart';
-import 'package:ecommerce/features/auth/domain/usecases/sign_out_use_case.dart';
-import 'package:ecommerce/features/auth/domain/usecases/sign_up_with_email_use_case.dart';
 import 'package:ecommerce/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:ecommerce/features/auth/presentation/bloc/auth_event.dart';
 import 'package:ecommerce/features/auth/presentation/bloc/auth_state.dart';
 import 'package:ecommerce/features/auth/presentation/pages/auth_screen.dart';
-import 'package:ecommerce/features/product/domain/usecases/add_to_cart_use_case.dart';
-import 'package:ecommerce/features/product/domain/usecases/fetch_prouct_use_case.dart';
-import 'package:ecommerce/features/product/domain/usecases/get_cart_use_case.dart';
-import 'package:ecommerce/features/product/domain/usecases/get_favourite_products_id_use_case.dart';
-import 'package:ecommerce/features/product/domain/usecases/remove_from_cart_use_case.dart';
-import 'package:ecommerce/features/product/domain/usecases/toggle_favourite_use_case.dart';
 import 'package:ecommerce/features/product/presentation/bloc/cart_bloc.dart';
 import 'package:ecommerce/features/product/presentation/bloc/cart_event.dart';
 import 'package:ecommerce/features/product/presentation/bloc/product_bloc.dart';
@@ -91,47 +79,35 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+
+        //bloc of auth bloc
+         BlocProvider(
+          create: (context) {
+          final authBloc = serviceLocator<AuthBloc>();
+          authBloc.add(CheckUserLoggedIn());
+          return authBloc;
+        }),
+
+        //bloc provider of Profile Feature
         BlocProvider(
-          create: (context) => AuthBloc(  //bloc provide of Auth Feture
-            continueWithGoogleUseCase:
-                ContinueWithGoogleUseCase(serviceLocator()),
-            signInWithEmailUseCase: SignInWithEmailUseCase(serviceLocator()),
-            signOutUseCase: SignOutUseCase(serviceLocator()),
-            signUpWithEmailUseCase: SignUpWithEmailUseCase(serviceLocator()),
-            getUserIdFromLocal: GetUserIdFromLocal(serviceLocator()), 
-            passwordResetUseCase: PasswordResetUseCase(serviceLocator()),
-          )..add(CheckUserLoggedIn()),
+            create: (context) => serviceLocator<ProfileBloc>()
         ),
-        BlocProvider(   //bloc provider of Profile Feature
-            create: (context) => ProfileBloc(
-                checkProfileStatusUseCase: serviceLocator(),
-                getProfileUseCase: serviceLocator(),
-                saveProfileUseCase: serviceLocator(),
-                updateProfileUseCase: serviceLocator()
-            )
+        
+        //bloc provider of Product Feature
+        BlocProvider(
+          create: (context){
+            return serviceLocator<ProductBloc>();
+          }
         ),
-        BlocProvider(   //bloc provider of Product Feature
-            create: (context) => ProductBloc(
-               FetchProuctUseCase(serviceLocator()),
-               GetFavouriteProductsIdUsecase(serviceLocator()),
-               ToggleFavouriteUsecase(serviceLocator()),
-            )
-        ),
-        //  BlocProvider(   //bloc provider of Cart Feature
-        //     create: (context) => CartBloc(
-        //        GetCartUseCase(serviceLocator()),
-        //        AddToCartUseCase(serviceLocator()),
-        //        RemoveFromCartUseCase(serviceLocator()),
-        //     ),
-        // ),
-             BlocProvider(   //bloc provider of Cart Feature
-            create: (context) => CartBloc(
-               getCartUseCase: serviceLocator(),
-               addToCartUseCase: serviceLocator(),
-               removeFromCartUseCase: serviceLocator(),
-               fetchProuctUseCase: serviceLocator(),
-            )..add(FetchProductForCart()),
-        ),
+                
+        //bloc provider for cart feature
+        BlocProvider(
+          create: (context) {
+          final cartBloc = serviceLocator<CartBloc>();
+          cartBloc.add(FetchProductForCart());
+          return cartBloc;
+        }),
+
       ],
       child: MaterialApp(
         title: 'E-Commerce App',
@@ -140,10 +116,8 @@ class MyApp extends StatelessWidget {
           builder: (context, state) {
             if (state is Authenticated) {
               return BottomNavigation();
-            }  
-          
+            }
             return AuthScreen();
-           
           },
         ),
         routes: {
@@ -155,4 +129,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
- 

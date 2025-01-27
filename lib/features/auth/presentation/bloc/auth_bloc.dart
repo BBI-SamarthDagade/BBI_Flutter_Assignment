@@ -25,6 +25,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required this.getUserIdFromLocal,
     required this.passwordResetUseCase,
   }) : super(AuthInitial()) {
+    
+    print("auth bloc instance created");
     // Register each event handler separately
     on<ContinueWithGoogleEvent>((event, emit) async {
       emit(AuthLoading());

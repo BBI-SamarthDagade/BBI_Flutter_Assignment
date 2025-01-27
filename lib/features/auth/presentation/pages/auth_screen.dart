@@ -1,4 +1,5 @@
-
+import 'package:ecommerce/constants/constants.dart';
+import 'package:ecommerce/features/product/presentation/widget/form_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ecommerce/features/auth/presentation/bloc/auth_bloc.dart';
@@ -24,12 +25,14 @@ class _AuthScreenState extends State<AuthScreen>
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
 
+  //function for toggle between sign up and sign in
   void _toggleSignUp() {
     setState(() {
       _isSignUp = !_isSignUp;
     });
   }
 
+  //function to handle form submit and validate all field using validate()
   void _handleSubmit(BuildContext context) {
     if (_formKey.currentState?.validate() ?? false) {
       final authEntity = AuthEntity(
@@ -66,9 +69,12 @@ class _AuthScreenState extends State<AuthScreen>
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthSuccess) {
-            print(_isSignUp);
             if (_isSignUp) {
-              Navigator.pushReplacementNamed(context, '/profileSetup');
+              //Navigator.pushReplacementNamed(context, '/profileSetup');
+              ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Please Verify your account and sign in")),
+            );
+            _toggleSignUp();
             } else {
               Navigator.pushReplacementNamed(context, '/profileSetup');
             }
@@ -78,52 +84,6 @@ class _AuthScreenState extends State<AuthScreen>
             );
           }
         },
-// listener: (context, state) async {
-//   if (state is AuthSuccess) {
-//     final user = FirebaseAuth.instance.currentUser;
-
-//     if (user != null) {
-//       // Dispatch GetProfileEvent
-//       context.read<ProfileBloc>().add(GetProfileEvent(user.uid));
-
-//       // Wait for the result of the profile fetching
-//       final profileState =
-//           await context.read<ProfileBloc>().stream.firstWhere(
-//                 (state) =>
-//                     state is ProfileLoaded || state is ProfileError,
-//               );
-
-//       if (profileState is ProfileLoaded) {
-//         final profile = profileState.profile;
-
-//         // Check if any field is empty
-//         if (profile.username.isEmpty ||
-//             profile.phoneNumber.isEmpty ||
-//             profile.address.isEmpty ||
-//             profile.imageUrl.isEmpty) {
-//           // Navigate to profile setup page if any field is empty
-//           Navigator.pushReplacementNamed(context, '/profileSetup');
-//         } else {
-//           // Navigate to home page if all fields are complete
-//           Navigator.pushReplacementNamed(context, '/home');
-//         }
-//       } else {
-//         // User profile does not exist, navigate to profile setup page
-//         Navigator.pushReplacementNamed(context, '/profileSetup');
-//       }
-//     } else {
-//       // Fallback case if user is not authenticated
-//       ScaffoldMessenger.of(context).showSnackBar(
-//         SnackBar(content: Text('User is not authenticated.')),
-//       );
-//     }
-//   } else if (state is AuthFailure) {
-//     ScaffoldMessenger.of(context).showSnackBar(
-//       SnackBar(content: Text(state.message)),
-//     );
-//   }
-// },
-
         builder: (context, state) {
           return Stack(
             children: [
@@ -136,38 +96,28 @@ class _AuthScreenState extends State<AuthScreen>
                       _isSignUp ? "Join Our Community!" : "Let's Sign You In!",
                       style: theme.textTheme.headlineMedium?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: Colors.orange,
+                        color: Constant.colorOrg,
                       ),
                       textAlign: TextAlign.center,
                     ),
                     SizedBox(height: 30),
                     Card(
-                      elevation: 12.0,
+                      elevation: 12,
                       shadowColor: Colors.black.withOpacity(0.8),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20.0),
                       ),
                       child: Padding(
-                        padding: EdgeInsets.all(20.0),
+                        padding: EdgeInsets.all(12.0),
                         child: Form(
                           key: _formKey,
                           child: Column(
                             children: [
-                              TextFormField(
+                              ReusableFormField(
+                                labelText: 'Email',
                                 controller: _emailController,
-                                decoration: InputDecoration(
-                                  labelText: 'Email',
-                                  prefixIcon: Icon(Icons.email_outlined),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(15.0),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                  filled: true,
-                                  fillColor: const Color(0xFFF3F4F6),
-                                ),
-                                keyboardType: TextInputType.emailAddress,
+                                prefixIcon: Icons.email_outlined,
                                 validator: (value) {
-                                  // Define a regex pattern for valid email addresses
                                   final emailRegex = RegExp(
                                       r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
                                   if (value == null || value.isEmpty) {
@@ -179,65 +129,43 @@ class _AuthScreenState extends State<AuthScreen>
                                 },
                               ),
                               SizedBox(height: 15.0),
-                              TextFormField(
+                              ReusableFormField(
+                                labelText: 'Password',
                                 controller: _passwordController,
-                                obscureText: !_isPasswordVisible,
-                                decoration: InputDecoration(
-                                  labelText: 'Password',
-                                  prefixIcon: Icon(Icons.lock_outline),
-                                  suffixIcon: IconButton(
-                                    icon: Icon(
-                                      _isPasswordVisible
-                                          ? Icons.visibility_outlined
-                                          : Icons.visibility_off_outlined,
-                                    ),
-                                    onPressed: () => setState(() =>
-                                        _isPasswordVisible =
-                                            !_isPasswordVisible),
-                                  ),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(15.0),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                  filled: true,
-                                  fillColor: Colors.grey.shade100,
-                                ),
+                                prefixIcon: Icons.lock_outline,
+                                obscureText: true,
+                                isPasswordField: true,
+                                isVisible: _isPasswordVisible,
+                                toggleVisibility: () => setState(() {
+                                  _isPasswordVisible = !_isPasswordVisible;
+                                }),
                                 validator: (value) => value == null ||
                                         value.length < 6
                                     ? 'Password must be at least 6 characters'
                                     : null,
                               ),
-                              if (_isSignUp) ...[
-                                SizedBox(height: 15.0),
-                                TextFormField(
-                                  controller: _confirmPasswordController,
-                                  obscureText: !_isConfirmPasswordVisible,
-                                  decoration: InputDecoration(
-                                    labelText: 'Confirm Password',
-                                    prefixIcon: Icon(Icons.lock_outline),
-                                    suffixIcon: IconButton(
-                                      icon: Icon(
-                                        _isConfirmPasswordVisible
-                                            ? Icons.visibility_outlined
-                                            : Icons.visibility_off_outlined,
-                                      ),
-                                      onPressed: () => setState(() =>
-                                          _isConfirmPasswordVisible =
-                                              !_isConfirmPasswordVisible),
+                              if (_isSignUp)
+                                Column(
+                                  children: [
+                                    SizedBox(height: 15.0),
+                                    ReusableFormField(
+                                      labelText: 'Confirm Password',
+                                      controller: _confirmPasswordController,
+                                      prefixIcon: Icons.lock_outline,
+                                      obscureText: true,
+                                      isPasswordField: true,
+                                      isVisible: _isConfirmPasswordVisible,
+                                      toggleVisibility: () => setState(() {
+                                        _isConfirmPasswordVisible =
+                                            !_isConfirmPasswordVisible;
+                                      }),
+                                      validator: (value) =>
+                                          value != _passwordController.text
+                                              ? 'Passwords do not match'
+                                              : null,
                                     ),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(15.0),
-                                      borderSide: BorderSide.none,
-                                    ),
-                                    filled: true,
-                                    fillColor: Colors.grey.shade100,
-                                  ),
-                                  validator: (value) =>
-                                      value != _passwordController.text
-                                          ? 'Passwords do not match'
-                                          : null,
+                                  ],
                                 ),
-                              ],
                             ],
                           ),
                         ),
@@ -312,8 +240,6 @@ class _AuthScreenState extends State<AuthScreen>
                       onPressed: () {
                         BlocProvider.of<AuthBloc>(context)
                             .add(ContinueWithGoogleEvent());
-                        // Navigator.pushReplacementNamed(
-                        //     context, '/profileSetup');
                       },
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15.0)),
